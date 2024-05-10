@@ -1,0 +1,46 @@
+.img-container {
+  margin-top: 11.8rem;
+  padding: 3rem 5rem;
+  height: 55rem;
+  background-repeat: no-repeat;
+  background-size: cover;
+  backdrop-filter: brightness(0.3);
+  color: white;
+}
+
+.top-part {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5rem;
+}
+
+.top-part h1 {
+  font-size: 45px;
+}
+
+.info-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 3rem;
+  margin-left: 3rem;
+}
+
+.info {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 3rem;
+}
+.info-container p {
+  font-size: 2.5rem;
+  margin: 0;
+  width: 100rem;
+}
+
+.admin-buttons {
+  display: flex;
+  gap: 2rem;
+}

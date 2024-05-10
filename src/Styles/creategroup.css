@@ -1,0 +1,43 @@
+.create-event-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 20rem;
+  padding: 4rem 15rem;
+  margin-top: 12rem;
+}
+
+.split-container,
+.dropdowns {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 7rem;
+}
+
+.split-container div,
+.dropdowns div {
+  flex: 1;
+}
+
+/* .form-container {
+  padding-top: 20rem;
+  margin-left: 33rem;
+  margin-bottom: 5rem;
+  display: block;
+} */
+.heading {
+  font-size: 5rem;
+  margin-bottom: 3rem;
+}
+.dropdowns {
+  display: flex;
+  flex-direction: row;
+}
+.checkboxes {
+  margin-top: 2rem;
+}
+
+.imgHolder img {
+  margin-left: 1rem;
+}

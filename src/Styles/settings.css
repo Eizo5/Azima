@@ -1,0 +1,127 @@
+.inside-settings {
+  padding-top: 10rem;
+  margin-left: 30.11rem;
+  height: 100rem;
+}
+
+.account-container {
+  display: flex;
+  margin-left: 6rem;
+  max-width: 100rem;
+}
+
+.account-image {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  max-width: 45rem;
+  align-items: center;
+  margin-top: 6rem;
+}
+.account-image img {
+  width: 23rem;
+}
+.info-container {
+  margin-left: 7rem;
+  margin-top: 5rem;
+  gap: 1rem;
+  max-width: fit-content;
+}
+.info-container h3 {
+  color: rgb(86, 17, 113);
+}
+.bold {
+  font-weight: 700;
+}
+
+.set-label {
+  padding-left: 10rem;
+  color: rgb(86, 17, 113);
+  font-size: 3rem;
+}
+.events-together {
+  display: flex;
+  flex-wrap: wrap;
+  padding-bottom: 2.5rem;
+}
+
+.dropdown-div {
+  width: 30rem;
+  padding-left: 10rem;
+  padding-bottom: 2rem;
+}
+
+.checkbox-div {
+  display: flex;
+  flex-direction: column;
+  padding-top: 2rem;
+  padding-left: 10rem;
+}
+
+.settings-header {
+  padding-left: 7rem;
+  padding-top: 2rem;
+  font-weight: 700;
+  font-size: 4.5rem;
+  color: rgb(86, 17, 113);
+}
+
+.group-image-name-container {
+  display: flex;
+  width: 100%;
+  gap: 20rem;
+  padding-left: 5rem;
+}
+
+.group-name-container {
+  width: 40rem;
+  padding-top: 25rem;
+}
+
+.description-overview-container {
+  width: 100.3rem;
+  padding-left: 5rem;
+  padding-top: 2rem;
+}
+.checkboxes-overview-container {
+  display: flex;
+  flex-direction: column;
+  padding-left: 5rem;
+  padding-top: 4rem;
+}
+.checkboxes-dropdowns-container {
+  display: flex;
+}
+.dropdowns-overview {
+  display: flex;
+  gap: 7rem;
+  width: 60rem;
+  padding-top: 7rem;
+}
+
+.member-container {
+  display: flex;
+  width: 100rem;
+  gap: 9rem;
+  padding-left: 6rem;
+  padding-top: 4rem;
+}
+
+.image-member-info {
+  width: 8rem;
+}
+.buttons-member-info {
+  display: flex;
+  padding-top: 2rem;
+  gap: 2rem;
+}
+.member-name {
+  font-size: 2.2rem;
+  padding-top: 0.5rem;
+  color: rgb(86, 17, 113);
+}
+
+.image-name-container-member {
+  display: flex;
+  gap: 2rem;
+}

@@ -1,0 +1,57 @@
+.Navbar {
+  width: 100%;
+  position: fixed;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2rem 3rem;
+  background-color: rgba(86, 17, 113, 0);
+  border-bottom: 1px solid rgba(78, 64, 64, 0);
+  transition: background-color 0.5s ease;
+}
+.fnav {
+  width: 100%;
+  position: fixed;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2rem 3rem;
+  background-color: rgba(86, 17, 113, 1);
+  border-bottom: 1px solid rgba(78, 64, 64, 1);
+}
+
+.scrolled {
+  background-color: rgba(86, 17, 113, 1);
+  border-bottom: 1px solid rgba(78, 64, 64, 0) 0.7;
+}
+
+ul {
+  width: 100%;
+  list-style-type: none;
+}
+
+.logo {
+  height: 8vh;
+}
+
+.temp {
+  display: flex;
+  text-align: right;
+
+  list-style: none;
+}
+
+.loginButtons {
+  display: flex;
+  align-items: center;
+  gap: 4rem;
+  margin-right: 3.5rem;
+}
+
+.nav-item a {
+  margin: 0 1.2rem;
+  width: 30px;
+}
