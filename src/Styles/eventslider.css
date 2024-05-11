@@ -1,9 +1,3 @@
-.event-slider {
-  border: 2px solid rgba(86, 17, 113, 0.4);
-
-  box-shadow: 10px 10px 10px 10px rgba(0, 0, 0, 0.1);
-}
-
 .slider {
   display: flex;
   height: 75%;
@@ -15,4 +9,11 @@
   margin-top: 5rem;
   font-size: 45px;
   color: rgb(86, 17, 113);
+}
+
+.swiper-button-next,
+.swiper-button-prev,
+.swiper-container-rtl .swiper-button-prev,
+.swiper-container-rtl .swiper-button-next {
+  color: rgba(86, 17, 113, 1);
 }

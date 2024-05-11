@@ -16,9 +16,10 @@
 }
 
 .button:hover {
-  background-color: white;
+  background-color: transparent;
   color: rgb(86, 17, 113);
   cursor: pointer;
+  border: ;
 }
 
 .button:disabled {
@@ -49,7 +50,7 @@
 }
 
 .alert:hover {
-  background-color: white;
+  background-color: transparent;
   color: #6b0101;
 }
 
@@ -75,5 +76,4 @@
 .center {
   display: flex;
   justify-content: center;
-  padding: 4rem 0;
 }

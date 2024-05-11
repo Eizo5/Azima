@@ -16,7 +16,7 @@ import { Link } from "react-router-dom";
 const NavBar = ({ navType }) => {
   const [scrolled, setScrolled] = useState(false);
   // const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   //Navigation function
   const navigate = useNavigate();

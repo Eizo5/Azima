@@ -22,7 +22,7 @@ export const EventSlider = () => {
       <Swiper
         modules={[Navigation]}
         spaceBetween={0}
-        slidesPerView={5}
+        slidesPerView={4}
         navigation
         onSlideChange={() => console.log("slide change")}
         onSwiper={(swiper) => console.log(swiper)}
