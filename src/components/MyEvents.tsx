@@ -1,4 +1,4 @@
-import { OurButton } from "./OurButton";
+import OurButton from "./OurButton";
 import { Event } from "./Event";
 import Test from "../assets/Eid.png";
 const MyEvents = () => {

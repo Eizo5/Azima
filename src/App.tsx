@@ -1,4 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Cloudinary } from "@cloudinary/url-gen";
 
 import HomePage from "./pages/HomePage";
 import Signin from "./pages/Signin";
@@ -14,6 +15,11 @@ import GroupImage from "./assets/groupimg.png";
 import GroupSettings from "./pages/GroupSettings";
 
 export default function App() {
+  const cld = new Cloudinary({
+    cloud: {
+      cloudName: "dkgrr55re",
+    },
+  });
   return (
     <AuthProvider>
       <BrowserRouter>

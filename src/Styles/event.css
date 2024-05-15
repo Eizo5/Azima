@@ -16,3 +16,9 @@
   font-size: 32px;
   color: rgb(86, 17, 113);
 }
+.event-image {
+  width: 25rem;
+  height: 25rem;
+  border-radius: 20rem;
+  object-fit: cover;
+}

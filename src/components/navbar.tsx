@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "../AuthContext";
 
-import { OurButton } from "./OurButton";
+import OurButton from "./OurButton";
 
 import "../Styles/Navbar.css";
 
@@ -13,10 +13,12 @@ import Notifications from "../assets/Notifications.png";
 import Settings from "../assets/Settings.png";
 import { Link } from "react-router-dom";
 
+import useAuthentication from "../hooks/userHook";
+
 const NavBar = ({ navType }) => {
   const [scrolled, setScrolled] = useState(false);
-  // const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const { user, logout } = useAuthentication();
 
   //Navigation function
   const navigate = useNavigate();
@@ -51,7 +53,7 @@ const NavBar = ({ navType }) => {
         <img className="logo" src={AzimaLogo} alt="Azima Logo" />
       </Link>
 
-      {isLoggedIn ? (
+      {user ? (
         <div className="temp">
           <li className="nav-item">
             <Link to="/Signup">
@@ -69,9 +71,14 @@ const NavBar = ({ navType }) => {
             </Link>
           </li>
           <li className="nav-item">
-            <a href="#">
-              <img src={LogoutIcon} alt="Logout Icon" />
-            </a>
+            <Link to="/home">
+              <img
+                src={LogoutIcon}
+                alt="Logout Icon"
+                className="logo"
+                onClick={logout}
+              />
+            </Link>
           </li>
         </div>
       ) : (

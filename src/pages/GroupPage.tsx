@@ -1,5 +1,5 @@
 import NavBar from "../components/navbar";
-import { OurButton } from "../components/OurButton";
+import OurButton from "../components/OurButton";
 import { EventSlider } from "../components/EventSlider";
 import { Footer } from "../components/Footer";
 

@@ -5,18 +5,20 @@ import martin from "../assets/MartinGarrix.png";
 import paint from "../assets/Paintball.png";
 import marmara from "../assets/Marmara.png";
 import "../Styles/eventslider.css";
-import { OurButton } from "./OurButton";
+import OurButton from "./OurButton";
 import { Swiper, SwiperSlide } from "swiper/react";
 // Import Swiper styles
 import "swiper/css";
 import { Navigation, Pagination, Scrollbar, A11y } from "swiper/modules";
 import "swiper/swiper-bundle.css";
 
-export const EventSlider = () => {
+import { user, prefferedGroups } from "../data/helpers";
+
+export const EventSlider = ({ object, label }) => {
   return (
     <div className="event-slider">
       <label htmlFor="slider" className="slider-label">
-        Your Events{" "}
+        {label}
       </label>
 
       <Swiper
@@ -27,10 +29,13 @@ export const EventSlider = () => {
         onSlideChange={() => console.log("slide change")}
         onSwiper={(swiper) => console.log(swiper)}
       >
-        <SwiperSlide>
-          <Event label={"Eid Celebration"} imageUrl={Eid} />
-        </SwiperSlide>
-        <SwiperSlide>
+        {object?.map((group) => (
+          <SwiperSlide>
+            <Event label={group.name} imageUrl={group.group_image} />
+          </SwiperSlide>
+        ))}
+
+        {/*   <SwiperSlide>
           <Event label={"Marmara Trip"} imageUrl={marmara} />
         </SwiperSlide>
         <SwiperSlide>
@@ -50,7 +55,7 @@ export const EventSlider = () => {
         </SwiperSlide>
         <SwiperSlide>
           <Event label={"Martix Garix"} imageUrl={martin} />
-        </SwiperSlide>
+        </SwiperSlide> */}
       </Swiper>
       <OurButton label="Show more" position="center" />
       {/* <div className="event-slider">

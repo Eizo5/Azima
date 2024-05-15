@@ -1,38 +1,58 @@
-import { useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import AuthContext from "../AuthContext";
+import React, { useEffect, useState } from "react";
 
 import "../Styles/Navbar.css";
 import "../Styles/signin.css";
 import NavBar from "../components/navbar";
-import { OurButton } from "../components/OurButton";
-import { Link } from "react-router-dom";
+import OurButton from "../components/OurButton";
+import { Link, useNavigate } from "react-router-dom";
 import { FaUser, FaLock } from "react-icons/fa";
+import useAuthentication from "../hooks/userHook";
 
 export default function () {
-  const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const navigate = useNavigate();
-  const handleLoginClick = () => {
-    navigate("/Home");
+
+  const { user, login } = useAuthentication();
+
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+    login(e, email, password);
   };
 
-  const finishSignIn = () => {
-    setIsLoggedIn(true);
-    handleLoginClick();
-  };
+  // If user is logged in navigate to home page
+  useEffect(() => {
+    user && navigate("/home");
+  });
+
   return (
     <div className="container">
       <NavBar navType="fnav" />
       <div className="wrapper">
-        <form action="">
+        <form onSubmit={handleLogin}>
           <h1>Login</h1>
           <div className="input-box">
-            <input type="text" placeholder="Username" required />
+            <input
+              type="text"
+              placeholder="Email"
+              required
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+              }}
+            />
             <FaUser className="icon" />
           </div>
           <div className="input-box">
-            <input type="text" placeholder="Password" required />
+            <input
+              type="password"
+              placeholder="Password"
+              required
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+              }}
+            />
             <FaLock className="icon" />
           </div>
           <div className="remember-forgot">
@@ -40,13 +60,10 @@ export default function () {
               <input type="checkbox" />
               Remember me
             </label>
+            <label></label>
             <a href="#">Forgot password?</a>
           </div>
-          <OurButton
-            label={"Sign-in"}
-            position="center"
-            onClick={finishSignIn}
-          />
+          <OurButton label={"Sign-in"} position="center" type="submit" />
           <div className="register-link">
             <p>
               Don't have an account? <Link to="/Signup">Register</Link>

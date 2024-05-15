@@ -1,6 +1,6 @@
 import "../Styles/settings.css";
 import { Event } from "./Event";
-import { OurButton } from "./OurButton";
+import OurButton from "./OurButton";
 import imgHolder from "../assets/EventImage.png";
 import { InputText } from "./InputText";
 import { InputDesc } from "./InputDesc";

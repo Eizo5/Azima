@@ -1,7 +1,7 @@
 import "../Styles/checkbox.css";
 
-const Checkbox = ({ label }) => {
-  const handleCheckedChange = (event) => {
+const Checkbox = ({ label, checked, onChange }) => {
+  const handleCheckedChange = (event: any) => {
     // Access the checkbox's checked state from the event object
     console.log("Checkbox is checked:", event.target.checked);
   };
@@ -9,7 +9,7 @@ const Checkbox = ({ label }) => {
   return (
     <div className="checkbox">
       <label>
-        <input type="checkbox" onChange={handleCheckedChange} />
+        <input type="checkbox" onChange={onChange} checked={checked} />
         {label}
       </label>
     </div>

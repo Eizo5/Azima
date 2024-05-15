@@ -38,6 +38,12 @@
   margin-top: 2rem;
 }
 
+.imgHolder {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
 .imgHolder img {
   margin-left: 1rem;
 }

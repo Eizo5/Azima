@@ -6,7 +6,7 @@ import Dropdown from "../components/Dropdown";
 import { Footer } from "../components/Footer";
 import "../Styles/creategroup.css";
 import { InputDesc } from "../components/InputDesc";
-import { OurButton } from "../components/OurButton";
+import OurButton from "../components/OurButton";
 
 import imgHolder from "../assets/EventImage.png";
 

@@ -1,5 +1,5 @@
 import "../Styles/settings.css";
-import { OurButton } from "./OurButton";
+import OurButton from "./OurButton";
 import ImgHolder from "../assets/MartinGarrix.png";
 
 const BannedInfo = () => {

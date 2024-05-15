@@ -1,4 +1,4 @@
-import { OurButton } from "./OurButton";
+import OurButton from "./OurButton";
 import imgHolder from "../assets/EventImage.png";
 import "../Styles/settings.css";
 

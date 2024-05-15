@@ -1,5 +1,5 @@
 import React from "react";
-import { OurButton } from "./OurButton";
+
 import Dropdown from "./Dropdown";
 import AzimaLogo from "../assets/AzimaLogo.png";
 import GooglePlay from "../assets/GooglePlay.png";
