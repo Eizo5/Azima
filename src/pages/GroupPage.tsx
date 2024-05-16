@@ -10,7 +10,8 @@ import Members from "../assets/Members.png";
 
 import "../Styles/groupPage.css";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import useGroup from "../hooks/groupHook";
 
 // joinStatus === "None"|"Pending"|"Member"
 const GroupPage = ({
@@ -24,6 +25,10 @@ const GroupPage = ({
   const [joinStatus, setJoinStatus] = useState("None");
   const [isAdmin, setIsAdmin] = useState(true);
 
+  const { group } = useGroup();
+
+  const { id } = useParams();
+  console.log(group);
   const eventInfo = [
     { imgSrc: Location, info: "Istanbul, Turkey" },
     {

@@ -123,8 +123,10 @@
   gap: 3rem;
 }
 .import-image-container img {
-  width: 20rem;
- 
+ width: 25rem;
+ height:25rem;
+ border-radius: 50rem;
+ object-fit: cover;
   
 }
 

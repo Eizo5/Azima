@@ -16,7 +16,7 @@ export default function () {
 
   const { user, login } = useAuthentication();
 
-  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     login(e, email, password);
   };
 

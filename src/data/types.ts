@@ -28,4 +28,15 @@ interface UserSignUp {
   preferences: number[];
 }
 
-export type { User, UserSignUp };
+interface Group {
+  group_id: number;
+  name: string;
+  description: string | null;
+  group_image: string;
+  is_adult_only: boolean;
+  is_private_group: boolean;
+  is_online: boolean;
+  is_f2f: boolean;
+}
+
+export type { User, UserSignUp, Group };

@@ -7,34 +7,36 @@ import { IntroPicture } from "../components/IntroPicture";
 import OurButton from "../components/OurButton";
 import { EventSlider } from "../components/EventSlider";
 import axios from "axios";
+
 import { useEffect, useState } from "react";
-import { prefferedGroups } from "../data/helpers";
+import useEvent from "../hooks/eventHook";
+
+//import { prefferedGroups } from "../data/helpers";
 import useAuthentication from "../hooks/userHook";
 // Other Imports
 
 export default function HomePage() {
   // Variables
-  const { user } = useAuthentication();
+  const { user, preferredGroups } = useAuthentication();
   const [comedyData, setComedyData] = useState([]);
   const [educationData, setEducationData] = useState([]);
   const [sportsData, setSportsData] = useState([]);
   const [religionData, setReligionData] = useState([]);
-  //Navigation function
+  const { events } = useEvent();
+
+  // Navigation function
   const navigate = useNavigate();
-  const handleCreateGroupButtonClick = () => {
-    navigate("/CreateGroup");
-  };
 
   const randomGroups = async () => {
     try {
       const response = await axios.get("http://localhost:9000/randomGroups");
-      console.log(response.data);
+
       setComedyData(response.data.comedy);
       setEducationData(response.data.education);
       setSportsData(response.data.sports);
       setReligionData(response.data.religion);
     } catch (error) {
-      console.log("404 groups not found");
+      console.error("404 groups not found");
     }
   };
 
@@ -42,18 +44,29 @@ export default function HomePage() {
     randomGroups();
   }, []);
 
+  console.log(preferredGroups);
+
   return (
     <div>
       <NavBar navType="Navbar" />
       <IntroPicture />
-      <OurButton
-        label="Create Group"
-        position="center"
-        onClick={handleCreateGroupButtonClick}
-      />
+      {user && (
+        <OurButton
+          label="Create Group"
+          position="center"
+          onClick={() => navigate("/CreateGroup")}
+        />
+      )}
 
       {user && (
-        <EventSlider object={prefferedGroups} label="Suggested Groups" />
+        <>
+          {preferredGroups && (
+            <EventSlider object={preferredGroups} label="Suggested Groups" />
+          )}
+          {events?.length > 0 && (
+            <EventSlider object={events} label="Your Events" />
+          )}
+        </>
       )}
 
       <EventSlider object={comedyData} label="Comedy Groups" />

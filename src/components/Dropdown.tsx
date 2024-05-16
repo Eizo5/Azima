@@ -1,26 +1,58 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import Select, { StylesConfig } from "react-select";
+
 import "../Styles/dropdown.css";
 
-const Dropdown = ({ label }) => {
-  const [selectedOption, setSelectedOption] = useState("option1");
+const Dropdown = ({ label, list, multiSelect = false, onChange }) => {
+  /*   const [selectedOption, setSelectedOption] = useState(
+    list ? list[0].name : ""
+  );
 
   const handleDropdownChange = (event) => {
     setSelectedOption(event.target.value);
+  };
+ */
+  const colourStyles: StylesConfig = {
+    control: (styles) => ({
+      ...styles,
+      backgroundColor: "transparent",
+      color: "white",
+    }),
+    option: (styles, { isSelected }) => {
+      return {
+        ...styles,
+        color: isSelected ? "white" : "rgb(86, 17, 113)",
+      };
+    },
   };
 
   return (
     <div className="dropdown-container">
       <label htmlFor="dropdown">{label}</label>
-      <select
+      <Select
+        className="dropdown"
+        id="dropdown"
+        defaultValue={list ? list[0] : {}}
+        name={label}
+        options={list}
+        isMulti={multiSelect}
+        styles={colourStyles}
+        onChange={onChange}
+      />
+      {/*   <select
         className="dropdown"
         id="dropdown"
         value={selectedOption}
         onChange={handleDropdownChange}
+        multiple={multiSelect}
       >
-        <option value="option1">Option 1</option>
-        <option value="option2">Option 2</option>
-        <option value="option3">Option 3</option>
-      </select>
+        {list &&
+          list.map(({ id, name }) => (
+            <option key={id} value={name}>
+              {name}
+            </option>
+          ))}
+      </select> */}
     </div>
   );
 };

@@ -4,10 +4,11 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 // Types
-import { User, UserSignUp } from "../data/types";
+import { Group, User, UserSignUp } from "../data/types";
 
 const useAuthentication = (): {
   user: User | null;
+  preferredGroups: Group | null;
   register: (e: React.FormEvent<HTMLFormElement>, formData: UserSignUp) => void;
   login: (
     e: React.FormEvent<HTMLFormElement>,
@@ -19,11 +20,16 @@ const useAuthentication = (): {
   const navigate = useNavigate();
 
   const [user, setUser] = useState<User | null>(null);
+  const [preferredGroups, setPreferredGroups] = useState<Group | null>(null);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
+    const groups = localStorage.getItem("preferredGroups");
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      setUser(() => JSON.parse(storedUser));
+    }
+    if (groups) {
+      setPreferredGroups(() => JSON.parse(groups));
     }
   }, []);
 
@@ -91,10 +97,15 @@ const useAuthentication = (): {
 
   const logout = () => {
     localStorage.removeItem("user");
+    localStorage.removeItem("preferredGroups");
+
+    navigate("/home");
+
     setUser(null);
+    setPreferredGroups(null);
   };
 
-  return { user, register, login, logout };
+  return { user, preferredGroups, register, login, logout };
 };
 
 export default useAuthentication;

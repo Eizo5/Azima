@@ -22,13 +22,6 @@ const NavBar = ({ navType }) => {
 
   //Navigation function
   const navigate = useNavigate();
-  const handleLoginButtonClick = () => {
-    navigate("/Signin");
-  };
-
-  const handleSignUpButtonClick = () => {
-    navigate("/Signup");
-  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -84,12 +77,12 @@ const NavBar = ({ navType }) => {
       ) : (
         <div className="loginButtons">
           <OurButton
-            onClick={handleLoginButtonClick}
+            onClick={() => navigate("/Signin")}
             label="Sign in"
             variant="transparent"
           />
           <OurButton
-            onClick={handleSignUpButtonClick}
+            onClick={() => navigate("/Signup")}
             label="Sign up"
             variant="primary"
           />

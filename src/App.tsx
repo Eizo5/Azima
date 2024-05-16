@@ -30,7 +30,7 @@ export default function App() {
           <Route path="/Signup" element={<Signup />} />
           <Route path="/CreateGroup" element={<CreateGroup />} />
           <Route
-            path="/GroupPage"
+            path="/GroupPage/:id"
             element={<GroupPage imgurl={GroupImage} label="Peaceful life" />}
           />
           <Route path="/CreateEvent" element={<CreateEvent />} />

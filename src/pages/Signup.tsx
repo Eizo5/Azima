@@ -81,7 +81,7 @@ export default function () {
   const { user, register } = useAuthentication();
 
   // Submit click handling
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = (e: any) => {
     const formData = {
       name,
       surname,
