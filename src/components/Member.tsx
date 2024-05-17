@@ -1,16 +1,31 @@
 import MemberInfo from "./MemberInfo";
+import { useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
+import useGroup from "../hooks/groupHook";
+import { GroupMembers } from "../data/types";
 
-const Members = () => {
+const Members = ({}) => {
+  const [groupMembers, setGroupMembers] = useState<GroupMembers[]>([]);
+  const { id } = useParams();
+  const { getGroupMembers } = useGroup();
+
+  console.log(groupMembers);
+  useEffect(() => {
+    getGroupMembers(id).then((res) => setGroupMembers(res));
+  }, []);
+
+  console.log();
   return (
     <div>
-      <h1 className="settings-header">Members Managment</h1>
-      <h1 className="bold set-label">{Members} Members</h1>
-      <MemberInfo />
-      <MemberInfo />
-      <MemberInfo />
-      <MemberInfo />
-      <MemberInfo />
-      <MemberInfo />
+      <h1 className="settings-header">Members Management</h1>
+      <h1 className="bold set-label">{groupMembers.length} Members</h1>
+      {groupMembers.map((member) => (
+        <MemberInfo
+          username={member.name}
+          imgUrl={member.profile_image}
+          ban={member.ID}
+        />
+      ))}
     </div>
   );
 };

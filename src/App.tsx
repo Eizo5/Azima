@@ -15,11 +15,6 @@ import GroupImage from "./assets/groupimg.png";
 import GroupSettings from "./pages/GroupSettings";
 
 export default function App() {
-  const cld = new Cloudinary({
-    cloud: {
-      cloudName: "dkgrr55re",
-    },
-  });
   return (
     <AuthProvider>
       <BrowserRouter>
@@ -41,7 +36,7 @@ export default function App() {
             }
           />
           <Route path="/Settings" element={<Settings />} />
-          <Route path="/GroupSettings" element={<GroupSettings />} />
+          <Route path="/GroupSettings/:id" element={<GroupSettings />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

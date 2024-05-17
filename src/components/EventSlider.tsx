@@ -31,7 +31,11 @@ export const EventSlider = ({ object, label }) => {
       >
         {object?.map((group) => (
           <SwiperSlide>
-            <Event label={group.name} imageUrl={group.group_image} />
+            <Event
+              label={group.name}
+              imageUrl={group.group_image}
+              id={group.group_id}
+            />
           </SwiperSlide>
         ))}
 

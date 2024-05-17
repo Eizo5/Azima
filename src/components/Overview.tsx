@@ -6,14 +6,17 @@ import { InputText } from "./InputText";
 import { InputDesc } from "./InputDesc";
 import Checkbox from "./Checkbox";
 import Dropdown from "../components/Dropdown";
+import useGroup from "../hooks/groupHook";
 
-const Overview = () => {
+const Overview = ({ groupData }) => {
+  const { categories } = useGroup();
+
   return (
     <div>
       <h1 className="settings-header">Overview</h1>
       <div className="group-image-name-container">
         <div className="account-image">
-          <img src={imgHolder} />
+          <img src={groupData ? groupData?.group_image : imgHolder} />
           <OurButton
             variant={""}
             onClick={() => {}}
@@ -22,21 +25,39 @@ const Overview = () => {
           />
         </div>
         <div className="group-name-container">
-          <InputText label="Group Name" />
+          <InputText
+            label="Group Name"
+            placeholder={groupData && groupData?.name}
+          />
         </div>
       </div>
       <div className="description-overview-container">
-        <InputDesc label="Description" />
+        <InputDesc
+          label="Description"
+          placeholder={groupData && groupData?.description}
+        />
       </div>
       <div className="checkboxes-dropdowns-container">
         <div className="checkboxes-overview-container">
-          <Checkbox label="Allow adults only" />
-          <Checkbox label="I want my group to be private" />
-          <Checkbox label="Allow participant in my location only" />
+          <Checkbox
+            label="Allow adults only"
+            checked={groupData && groupData?.is_adult_only}
+          />
+          <Checkbox
+            label="I want my group to be private"
+            checked={groupData && groupData?.is_private_group}
+          />
         </div>
         <div className="dropdowns-overview">
-          <Dropdown label="Event Type" />
-          <Dropdown label="Group Type" />
+          <Dropdown
+            list={[
+              { value: "online", label: "Online" },
+              { value: "f2f", label: "f2f" },
+            ]}
+            multiSelect={true}
+            label="Events Type"
+          />
+          <Dropdown list={categories} multiSelect={true} label="Group Type" />
         </div>
       </div>
     </div>

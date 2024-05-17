@@ -19,7 +19,10 @@
   margin-top: 6rem;
 }
 .account-image img {
-  width: 23rem;
+  width: 25rem;
+  height: 25rem;
+  border-radius: 50rem;
+  object-fit: cover;
 }
 .info-container {
   margin-left: 7rem;
@@ -109,6 +112,9 @@
 
 .image-member-info {
   width: 8rem;
+  height: 8rem;
+  border-radius: 50rem;
+  object-fit: cover;
 }
 .buttons-member-info {
   display: flex;

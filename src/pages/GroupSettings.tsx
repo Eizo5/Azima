@@ -5,6 +5,7 @@ import Admins1 from "../components/Admins";
 import Bans1 from "../components/Bans";
 import Overview1 from "../components/Overview";
 import GroupEvents from "../components/GroupEvents";
+import { useNavigate, useParams } from "react-router-dom";
 
 import "../Styles/settings.css";
 
@@ -13,10 +14,16 @@ import Members from "../assets/Members.png";
 import Bans from "../assets/Bans.png";
 import Admins from "../assets/Admins.png";
 import GroupEventsImage from "../assets/GroupEvents2.png";
-
-import { useState } from "react";
+import { Group, GroupMembers } from "../data/types";
+import { useState, useEffect } from "react";
+import useGroup from "../hooks/groupHook";
 
 const GroupSettings = () => {
+  const [groupData, setGroupData] = useState<Group | null>(null);
+  const [groupMembers, setGroupMembers] = useState<GroupMembers[]>([]);
+  const { id } = useParams();
+  const { getGroup, getGroupMembers } = useGroup();
+
   const [settingStatus, setSettingStatus] = useState("a");
   const handleAccountClick = () => {
     setSettingStatus("a");
@@ -36,6 +43,13 @@ const GroupSettings = () => {
   };
 
   var selectedButton = "a";
+
+  useEffect(() => {
+    getGroup(id).then((res) => setGroupData(res));
+  }, []);
+
+  console.log(groupMembers[0]?.name);
+
   return (
     <div>
       {settingStatus === "a"
@@ -71,7 +85,7 @@ const GroupSettings = () => {
       />
       <div className="inside-settings">
         {settingStatus === "a" ? (
-          <Overview1 />
+          <Overview1 groupData={groupData} />
         ) : settingStatus === "b" ? (
           <Member />
         ) : settingStatus === "c" ? (

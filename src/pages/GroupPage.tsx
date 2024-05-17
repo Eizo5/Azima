@@ -9,9 +9,11 @@ import Comedy from "../assets/Comedy.png";
 import Members from "../assets/Members.png";
 
 import "../Styles/groupPage.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import useGroup from "../hooks/groupHook";
+
+import { Group } from "../data/types";
 
 // joinStatus === "None"|"Pending"|"Member"
 const GroupPage = ({
@@ -24,18 +26,18 @@ const GroupPage = ({
 }) => {
   const [joinStatus, setJoinStatus] = useState("None");
   const [isAdmin, setIsAdmin] = useState(true);
-
-  const { group } = useGroup();
+  const [groupData, setGroupData] = useState<Group | null>(null);
+  const { getGroup } = useGroup();
 
   const { id } = useParams();
-  console.log(group);
+
   const eventInfo = [
-    { imgSrc: Location, info: "Istanbul, Turkey" },
+    { imgSrc: Location, info: groupData?.location },
     {
       imgSrc: Description,
-      info: "Peaceful Life is a group where you can find people who loves having a quiet and fulling life, where you can do yoga, Meditation, Park picnics and more!! Join us now.",
+      info: groupData?.description,
     },
-    { imgSrc: Comedy, info: "Entertainment " },
+    { imgSrc: Comedy, info: groupData?.categories },
     { imgSrc: Members, info: "10 Members " },
   ];
 
@@ -45,19 +47,24 @@ const GroupPage = ({
   };
 
   const handleSettingsClick = () => {
-    navigate("/GroupSettings");
+    navigate(`/GroupSettings/${id}`);
   };
+
+  useEffect(() => {
+    getGroup(id).then((res) => setGroupData(res));
+  }, []);
+
   return (
     <div>
       <NavBar navType="fnav" />
       <div
         className="img-container"
         style={{
-          backgroundImage: `url("${imgurl}")`,
+          backgroundImage: `url("${groupData?.group_image}")`,
         }}
       >
         <div className="top-part">
-          <h1>{label}</h1>
+          <h1>{groupData?.name}</h1>
           {joinStatus !== "Member" && !isAdmin && (
             <OurButton
               label={joinStatus === "None" ? "Join" : "Request Sent"}
@@ -71,7 +78,7 @@ const GroupPage = ({
           )}
           {isAdmin && (
             <div className="admin-buttons">
-              <OurButton label="Request" thin variant="transparent" />
+              <OurButton label="Requests" thin variant="transparent" />
               <OurButton
                 label="Add Event"
                 thin

@@ -44,8 +44,6 @@ export default function HomePage() {
     randomGroups();
   }, []);
 
-  console.log(preferredGroups);
-
   return (
     <div>
       <NavBar navType="Navbar" />

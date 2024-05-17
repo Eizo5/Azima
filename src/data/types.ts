@@ -31,12 +31,32 @@ interface UserSignUp {
 interface Group {
   group_id: number;
   name: string;
+  location: "string";
   description: string | null;
   group_image: string;
   is_adult_only: boolean;
   is_private_group: boolean;
   is_online: boolean;
   is_f2f: boolean;
+  categories: number[];
 }
 
-export type { User, UserSignUp, Group };
+interface GroupMembers {
+  ID: number;
+  birthdate: string;
+  email: string;
+  is_email_notifications_on: boolean;
+  is_email_private: boolean;
+  is_name_private: boolean;
+  is_sms_notifications_on: boolean;
+  is_theme_dark: boolean;
+  is_updates_notifications_on: boolean;
+  language: null;
+  name: string;
+  password: string;
+  profile_image: string;
+  surname: string;
+  username: string;
+}
+
+export type { User, UserSignUp, Group, GroupMembers };
