@@ -1,7 +1,14 @@
 import React from "react";
 import "../Styles/inputText.css";
 
-export const InputDesc = ({ label, placeholder, value, onChange, name }) => {
+export const InputDesc = ({
+  label,
+  placeholder,
+  value,
+  onChange,
+  name,
+  defaultValue,
+}) => {
   return (
     <div className="input-text">
       <label htmlFor="input">{label}</label>
@@ -12,6 +19,7 @@ export const InputDesc = ({ label, placeholder, value, onChange, name }) => {
         value={value}
         onChange={onChange}
         name={name}
+        defaultValue={defaultValue}
       />
     </div>
   );

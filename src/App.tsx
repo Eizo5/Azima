@@ -28,13 +28,8 @@ export default function App() {
             path="/GroupPage/:id"
             element={<GroupPage imgurl={GroupImage} label="Peaceful life" />}
           />
-          <Route path="/CreateEvent" element={<CreateEvent />} />
-          <Route
-            path="/EventPage"
-            element={
-              <EventPage label="Marmara Trip" imgurl={ImageBackground} />
-            }
-          />
+          <Route path="/CreateEvent/:id" element={<CreateEvent />} />
+          <Route path="/EventPage/:id" element={<EventPage />} />
           <Route path="/Settings" element={<Settings />} />
           <Route path="/GroupSettings/:id" element={<GroupSettings />} />
         </Routes>

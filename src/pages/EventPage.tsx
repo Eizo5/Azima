@@ -9,30 +9,35 @@ import Location from "../assets/Location.png";
 import Description from "../assets/Description.png";
 import Comedy from "../assets/Comedy.png";
 import Members from "../assets/Members.png";
+import Date from "../assets/date.png";
 
 import "../Styles/groupPage.css";
-import { useState } from "react";
-
-const EventPage = ({
-  label,
-  location,
-  description,
-  genre,
-  members,
-  imgurl,
-}) => {
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { EventType } from "../data/types";
+import useEvent from "../hooks/eventHook";
+const EventPage = () => {
+  const [eventData, setEventData] = useState<EventType | null>(null);
   const [joinStatus, setJoinStatus] = useState("None");
   const [isAdmin, setIsAdmin] = useState(true);
+  const [isConAllowed, setIsConAllowed] = useState(false);
+  const { id } = useParams();
+  const { getEventData } = useEvent();
 
   const eventInfo = [
-    { imgSrc: Location, info: "Istanbul, Turkey" },
+    { imgSrc: Location, info: eventData?.location },
     {
       imgSrc: Description,
       info: "Peaceful Life is a group where you can find people who loves having a quiet and fulling life, where you can do yoga, Meditation, Park picnics and more!! Join us now.",
     },
     { imgSrc: Comedy, info: "Entertainment " },
     { imgSrc: Members, info: "10 Members " },
+    { imgSrc: Date, info: eventData?.event_date + " " + eventData?.time },
   ];
+
+  useEffect(() => {
+    getEventData(id).then((res) => setEventData(res));
+  });
 
   return (
     <div>
@@ -40,11 +45,11 @@ const EventPage = ({
       <div
         className="img-container"
         style={{
-          backgroundImage: `url("${imgurl}")`,
+          backgroundImage: `url("${eventData?.event_image}")`,
         }}
       >
         <div className="top-part">
-          <h1>{label}</h1>
+          <h1>{eventData?.name}</h1>
           {joinStatus !== "Member" && !isAdmin && (
             <OurButton
               label={joinStatus === "None" ? "Join" : "Request Sent"}
@@ -91,20 +96,36 @@ const EventPage = ({
           swim. You can be picked up at your preferred time and brought back to
           Sfakia.
         </p>
+        <h3>Rules: </h3>
+        <p>{eventData?.rules}</p>
       </div>
       <div className="others">
         <p>
-          <span className="bold">Age restriction:</span> Suitable to all ages.
+          <span className="bold">Ticket Price:</span>{" "}
+          {eventData?.ticket_price + " " + eventData?.currency}
         </p>
         <p>
-          <span className="bold">Available tickets:</span> 100 tickets.
+          <span className="bold">Included:</span>{" "}
+          {eventData?.ticket_included_items}
         </p>
         <p>
-          <span className="bold">Return policy:</span> Refunds are accepted up
-          to 9 days before the event.
+          <span className="bold">Not Included:</span>{" "}
+          {eventData?.ticket_not_included_items}
         </p>
         <p>
-          <span className="bold">Contributors:</span> Abdulaziz Faham
+          <span className="bold">Age restriction:</span>{" "}
+          {eventData?.age_restriction}
+        </p>
+        <p>
+          <span className="bold">Available tickets:</span>{" "}
+          {eventData?.event_capacity}
+        </p>
+        <p>
+          <span className="bold">Return policy:</span>
+          {eventData?.return_policy}
+        </p>
+        <p>
+          <span className="bold">Guests:</span> {eventData?.guests}
         </p>
       </div>
       <Footer />

@@ -4,14 +4,18 @@ import ImgHolder from "../assets/MartinGarrix.png";
 import useGroup from "../hooks/groupHook";
 import { useParams } from "react-router-dom";
 
-const MemberInfo = ({ username, imgUrl, ban }) => {
+const MemberInfo = ({ username, imgUrl, memberId }) => {
   const { id } = useParams();
-  const { banMember } = useGroup();
+  const { banMember, assignAdmin } = useGroup();
 
   const banMemberClick = (e: any) => {
-    e.preventDefault();
-    banMember(ban, id);
-    console.log("member banned", username, id, ban);
+    banMember(memberId, id);
+    console.log("member banned", username, id, memberId);
+  };
+
+  const assignAdminClick = () => {
+    assignAdmin(memberId, id);
+    console.log("Member assigned admin", username);
   };
   return (
     <div className="member-container">
@@ -21,7 +25,7 @@ const MemberInfo = ({ username, imgUrl, ban }) => {
       </div>
       <div className="buttons-member-info">
         <OurButton label="Ban" thin variant="alert" onClick={banMemberClick} />
-        <OurButton label="Assign Admin" thin />
+        <OurButton label="Assign Admin" thin onClick={assignAdminClick} />
       </div>
     </div>
   );

@@ -58,5 +58,26 @@ interface GroupMembers {
   surname: string;
   username: string;
 }
+interface EventType {
+  age_restriction: number;
+  currency: string;
+  event_capacity: number;
+  event_date: string;
+  event_id: number;
+  event_image: string;
+  group_id: number;
+  guests: string;
+  is_contribution_allowed: boolean;
+  is_event_private: boolean;
+  name: string;
+  return_policy: string;
+  rules: string;
+  ticket_included_items: string;
+  ticket_not_included_items: string;
+  ticket_price: string;
+  time: string;
+  location: string;
+  description: string;
+}
 
-export type { User, UserSignUp, Group, GroupMembers };
+export type { User, UserSignUp, Group, GroupMembers, EventType };

@@ -13,21 +13,15 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import useGroup from "../hooks/groupHook";
 
-import { Group } from "../data/types";
+import { Group, EventType } from "../data/types";
 
 // joinStatus === "None"|"Pending"|"Member"
-const GroupPage = ({
-  label,
-  location,
-  description,
-  genre,
-  members,
-  imgurl,
-}) => {
+const GroupPage = () => {
+  const [groupEvents, setGroupEvents] = useState<EventType[]>([]);
   const [joinStatus, setJoinStatus] = useState("None");
   const [isAdmin, setIsAdmin] = useState(true);
   const [groupData, setGroupData] = useState<Group | null>(null);
-  const { getGroup } = useGroup();
+  const { getGroup, getGroupEvents } = useGroup();
 
   const { id } = useParams();
 
@@ -43,7 +37,7 @@ const GroupPage = ({
 
   const navigate = useNavigate();
   const handleAddEventClick = () => {
-    navigate("/CreateEvent");
+    navigate(`/CreateEvent/${id}`);
   };
 
   const handleSettingsClick = () => {
@@ -52,6 +46,7 @@ const GroupPage = ({
 
   useEffect(() => {
     getGroup(id).then((res) => setGroupData(res));
+    getGroupEvents(id).then((res) => setGroupEvents(res));
   }, []);
 
   return (
@@ -103,8 +98,8 @@ const GroupPage = ({
           ))}
         </div>
       </div>
-      <EventSlider />
-      <EventSlider />
+      <EventSlider event object={groupEvents} label="New Events" />
+      <EventSlider event object={groupEvents} label="Past Events" />
       <Footer />
     </div>
   );

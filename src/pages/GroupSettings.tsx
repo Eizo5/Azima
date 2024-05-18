@@ -14,15 +14,14 @@ import Members from "../assets/Members.png";
 import Bans from "../assets/Bans.png";
 import Admins from "../assets/Admins.png";
 import GroupEventsImage from "../assets/GroupEvents2.png";
-import { Group, GroupMembers } from "../data/types";
+import { Group } from "../data/types";
 import { useState, useEffect } from "react";
 import useGroup from "../hooks/groupHook";
 
 const GroupSettings = () => {
   const [groupData, setGroupData] = useState<Group | null>(null);
-  const [groupMembers, setGroupMembers] = useState<GroupMembers[]>([]);
   const { id } = useParams();
-  const { getGroup, getGroupMembers } = useGroup();
+  const { getGroup } = useGroup();
 
   const [settingStatus, setSettingStatus] = useState("a");
   const handleAccountClick = () => {
@@ -47,8 +46,6 @@ const GroupSettings = () => {
   useEffect(() => {
     getGroup(id).then((res) => setGroupData(res));
   }, []);
-
-  console.log(groupMembers[0]?.name);
 
   return (
     <div>

@@ -10,7 +10,6 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 import CloudinaryUploadWidget from "../components/UploadImage";
-import { Cloudinary } from "@cloudinary/url-gen";
 
 import "../Styles/creategroup.css";
 

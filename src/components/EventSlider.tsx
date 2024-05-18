@@ -14,7 +14,7 @@ import "swiper/swiper-bundle.css";
 
 import { user, prefferedGroups } from "../data/helpers";
 
-export const EventSlider = ({ object, label }) => {
+export const EventSlider = ({ object, label, event }) => {
   return (
     <div className="event-slider">
       <label htmlFor="slider" className="slider-label">
@@ -32,9 +32,12 @@ export const EventSlider = ({ object, label }) => {
         {object?.map((group) => (
           <SwiperSlide>
             <Event
+              event={event && "event"}
               label={group.name}
-              imageUrl={group.group_image}
-              id={group.group_id}
+              imageUrl={
+                group.group_image ? group.group_image : group.event_image
+              }
+              id={group.group_id ? group.group_id : group.event_id}
             />
           </SwiperSlide>
         ))}

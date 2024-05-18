@@ -1,8 +1,8 @@
 import NavBar from "../components/navbar";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { InputText } from "../components/InputText";
 import Checkbox from "../components/Checkbox";
-import Dropdown from "../components/Dropdown";
+
 import { Footer } from "../components/Footer";
 import "../Styles/creategroup.css";
 import { InputDesc } from "../components/InputDesc";
@@ -10,102 +10,224 @@ import OurButton from "../components/OurButton";
 
 import imgHolder from "../assets/EventImage.png";
 
+import { useState, useEffect } from "react";
+import CloudinaryUploadWidget from "../components/UploadImage";
+import useEvent from "../hooks/eventHook";
+
 const CreateEvent = () => {
-  const navigate = useNavigate();
-  const handleCreateEventClick = () => {
-    navigate("/EventPage");
+  const [publicId, setPublicId] = useState("");
+  const [cloudName] = useState("dkgrr55re");
+  const { id } = useParams();
+  const [uploadPreset] = useState("v6wusflm");
+  const [uwConfig] = useState({
+    cloudName,
+    uploadPreset,
+    // cropping: true, //add a cropping step
+    // showAdvancedOptions: true,  //add advanced options (public_id and tag)
+    // sources: [ "local", "url"], // restrict the upload sources to URL and local files
+    // multiple: false,  //restrict upload to a single file
+    // folder: "user_images", //upload files to the specified folder
+    // tags: ["users", "profile"], //add the given tags to the uploaded files
+    // context: {alt: "user_uploaded"}, //add the given context data to the uploaded files
+    // clientAllowedFormats: ["images"], //restrict uploading to image files only
+    // maxImageFileSize: 2000000,  //restrict file size to less than 2MB
+    // maxImageWidth: 2000, //Scales the image down to a width of 2000 pixels before uploading
+    // theme: "purple", //change to a purple theme
+  });
+  const { createEvent } = useEvent();
+  const [eventData, setEventData] = useState({
+    name: "",
+    group_id: id,
+    event_date: "",
+    time: "",
+    age_restriction: "",
+    event_capacity: "",
+    ticket_price: "",
+    currency: "",
+    ticket_included_items: "",
+    ticket_not_included_items: "",
+    return_policy: "",
+    guests: "",
+    is_event_private: false,
+    is_contribution_allowed: false,
+    rules: "",
+    event_image: "",
+    location: "",
+    description: "",
+  });
+
+  const handleCreateEventClick = (e) => {
+    e.preventDefault();
+    createEvent(eventData);
   };
+  const handleInputChange = (e: any) => {
+    setEventData({ ...eventData, [e.target.name]: e.target.value });
+  };
+
+  useEffect(() => {
+    // Fetch the profile image URL using the publicId and update the image source
+    if (publicId) {
+      // Construct the Cloudinary image URL with the publicId
+      const baseUrl = "https://res.cloudinary.com/dkgrr55re/image/upload/";
+      const imageUrl = `${baseUrl}${publicId}`;
+
+      // Update the image source in groupData
+      setEventData({ ...eventData, event_image: imageUrl });
+    }
+  }, [publicId]);
   return (
     <div>
       <NavBar navType="fnav" />
-      <div className="create-event-container">
-        <div className="form-container">
-          <label className="heading">Event Info</label>
-          <InputText
-            label="Event Name *"
-            placeholder="Enter your event name here..."
-          />
-          <InputText
-            label="Event Location *"
-            placeholder="Enter your group location here..."
-          />
-          <InputText
-            label="Event Date *"
-            placeholder="Enter your group location here..."
-          />
-          <div className="split-container">
-            <InputText label="Start Time *" placeholder="Example: 6:00 PM" />
-            <InputText label="End Time *" placeholder="Example: 11:00 PM" />
-          </div>
-
-          <div className="dropdowns" style={{ maxWidth: "47%" }}>
-            <Dropdown label="Event Type" />
-          </div>
-
-          <InputDesc
-            label="Event Program *"
-            placeholder="Write a description..."
-          />
-
-          <InputText label="Age Restriction" placeholder="Add an age..." />
-          <InputText
-            label="Event Capacity (Attendees)"
-            placeholder="Add a limit for number of attendees..."
-          />
-          <InputText
-            label="Add Contributors "
-            placeholder="Example: @AzizAbdulfaham"
-          />
-
-          <div className="split-container">
-            <InputText label="Ticket Price" placeholder="Example: 100" />
-            <InputText label="Currency" placeholder="Example: Euro, TL..." />
-          </div>
-          <InputText
-            label="What’s included in the ticket price? "
-            placeholder="Example: One Soft Drink"
-          />
-          <InputText
-            label="What’s not included in the ticket price? "
-            placeholder="Example: Food"
-          />
-          <InputText
-            label="Return policy "
-            placeholder="Example: Can return before 9 days of event"
-          />
-          <InputText label="Guests  " placeholder="Example: @AzizAbdulfaham" />
-          <InputText
-            label="Add Other Rules  "
-            placeholder="Example: No entry after 8:00 PM"
-          />
-          <div className="checkboxes">
-            <Checkbox
-              label="I want my event to be private 
-(If you disable this it means even people not in your group will be able to see the event and join it)"
+      <form onSubmit={handleCreateEventClick}>
+        <div className="create-event-container">
+          <div className="form-container">
+            <label className="heading">Event Info</label>
+            <InputText
+              label="Event Name *"
+              placeholder="Enter your event name here..."
+              value={eventData.name}
+              onChange={handleInputChange}
+              name="name"
             />
-            <Checkbox label="Allow contribution requests" />
+            <InputText
+              label="Event Location *"
+              placeholder="Enter your group location here..."
+              value={eventData.location}
+              onChange={handleInputChange}
+              name="location"
+            />
+            <InputText
+              label="Event Date *"
+              placeholder="Enter your group location here..."
+              value={eventData.event_date}
+              onChange={handleInputChange}
+              name="event_date"
+              date
+            />
+            <div className="split-container">
+              <InputText
+                label="Start Time *"
+                placeholder="Example: 6:00 PM"
+                value={eventData.time}
+                onChange={handleInputChange}
+                name="time"
+              />
+            </div>
+
+            <InputText
+              label="Age Restriction"
+              placeholder="Add an age..."
+              value={eventData.age_restriction}
+              onChange={handleInputChange}
+              name="age_restriction"
+            />
+            <InputText
+              label="Event Capacity (Attendees)"
+              placeholder="Add a limit for number of attendees..."
+              value={eventData.event_capacity}
+              onChange={handleInputChange}
+              name="event_capacity"
+            />
+
+            <div className="split-container">
+              <InputText
+                label="Ticket Price"
+                placeholder="Example: 100"
+                value={eventData.ticket_price}
+                onChange={handleInputChange}
+                name="ticket_price"
+              />
+              <InputText
+                label="Currency"
+                placeholder="Example: Euro, TL..."
+                value={eventData.currency}
+                onChange={handleInputChange}
+                name="currency"
+              />
+            </div>
+            <InputText
+              label="What’s included in the ticket price? "
+              placeholder="Example: One Soft Drink"
+              value={eventData.ticket_included_items}
+              onChange={handleInputChange}
+              name="ticket_included_items"
+            />
+            <InputText
+              label="What’s not included in the ticket price? "
+              placeholder="Example: Food"
+              value={eventData.ticket_not_included_items}
+              onChange={handleInputChange}
+              name="ticket_not_included_items"
+            />
+            <InputText
+              label="Return policy "
+              placeholder="Example: Can return before 9 days of event"
+              value={eventData.return_policy}
+              onChange={handleInputChange}
+              name="return_policy"
+            />
+            <InputText
+              label="Guests  "
+              placeholder="Example: @AzizAbdulfaham"
+              value={eventData.guests}
+              onChange={handleInputChange}
+              name="guests"
+            />
+            <InputText
+              label="Add Other Rules  "
+              placeholder="Example: No entry after 8:00 PM"
+              value={eventData.rules}
+              onChange={handleInputChange}
+              name="rules"
+            />
+            <InputDesc
+              label="Group Description"
+              placeholder="Enter your group description here"
+              value={eventData.description}
+              onChange={handleInputChange}
+              name="description"
+            />
+            <div className="checkboxes">
+              <Checkbox
+                label="I want my event to be private 
+(If you disable this it means even people not in your group will be able to see the event and join it)"
+                onChange={() =>
+                  setEventData({
+                    ...eventData,
+                    is_event_private: !eventData.is_event_private,
+                  })
+                }
+                checked={eventData.is_event_private}
+              />
+              <Checkbox
+                label="Allow contribution requests"
+                onChange={() =>
+                  setEventData({
+                    ...eventData,
+                    is_contribution_allowed: !eventData.is_contribution_allowed,
+                  })
+                }
+                checked={eventData.is_contribution_allowed}
+              />
+            </div>
+
+            <OurButton
+              position=""
+              label="Create Event"
+              variant=""
+              type="submit"
+            />
           </div>
 
-          <OurButton
-            position=""
-            label="Create Event"
-            onClick={handleCreateEventClick}
-            variant=""
-          />
+          <div className="imgHolder">
+            <img src={imgHolder} />
+            <CloudinaryUploadWidget
+              uwConfig={uwConfig}
+              setPublicId={setPublicId}
+            />
+          </div>
         </div>
-
-        <div className="imgHolder">
-          <img src={imgHolder} />
-          <OurButton
-            variant={""}
-            onClick={() => {}}
-            position="center"
-            thin
-            label="Upload Image"
-          />
-        </div>
-      </div>
-
+      </form>
       <Footer />
     </div>
   );

@@ -60,14 +60,74 @@ const useGroup = () => {
       console.error("404 Group Member couldn't be fetched");
     }
   };
+  const getGroupEvents = async (group_id: any) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:9000/getGroupEvents/${group_id}`
+      );
+
+      return response.data;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const getAdmins = async (group_id: any) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:9000/getAdmins/${group_id}`
+      );
+
+      return response.data;
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
     getCategories();
   }, []);
 
+  const updateGroup = async (groupData: any) => {
+    try {
+      const response = await axios.put(
+        `http://localhost:9000/banMember`,
+        groupData
+      );
+
+      return response.data;
+    } catch (error) {
+      console.error(error);
+    }
+  };
   const banMember = async (userID: any, groupID: any) => {
     try {
       const response = await axios.put(`http://localhost:9000/banMember`, {
+        group_id: groupID,
+        user_id: userID,
+      });
+
+      return response.data;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const assignAdmin = async (userID: any, groupID: any) => {
+    try {
+      const response = await axios.put(`http://localhost:9000/assignAdmin`, {
+        group_id: groupID,
+        user_id: userID,
+      });
+
+      return response.data;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const removeAdmin = async (userID: any, groupID: any) => {
+    try {
+      const response = await axios.put(`http://localhost:9000/removeAdmin`, {
         group_id: groupID,
         user_id: userID,
       });
@@ -110,6 +170,11 @@ const useGroup = () => {
     banMember,
     getBannedMembers,
     removeBan,
+    assignAdmin,
+    getAdmins,
+    removeAdmin,
+    getGroupEvents,
+    updateGroup,
   };
 };
 

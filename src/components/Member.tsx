@@ -4,12 +4,11 @@ import { useState, useEffect } from "react";
 import useGroup from "../hooks/groupHook";
 import { GroupMembers } from "../data/types";
 
-const Members = ({}) => {
+const Members = () => {
   const [groupMembers, setGroupMembers] = useState<GroupMembers[]>([]);
   const { id } = useParams();
   const { getGroupMembers } = useGroup();
 
-  console.log(groupMembers);
   useEffect(() => {
     getGroupMembers(id).then((res) => setGroupMembers(res));
   }, []);
@@ -23,7 +22,7 @@ const Members = ({}) => {
         <MemberInfo
           username={member.name}
           imgUrl={member.profile_image}
-          ban={member.ID}
+          memberId={member.ID}
         />
       ))}
     </div>
