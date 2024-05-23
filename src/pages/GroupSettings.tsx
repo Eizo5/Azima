@@ -82,7 +82,7 @@ const GroupSettings = () => {
       />
       <div className="inside-settings">
         {settingStatus === "a" ? (
-          <Overview1 groupData={groupData} />
+          <Overview1 />
         ) : settingStatus === "b" ? (
           <Member />
         ) : settingStatus === "c" ? (

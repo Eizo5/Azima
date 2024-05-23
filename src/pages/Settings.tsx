@@ -25,9 +25,6 @@ const Settings = () => {
   const handleMyEventsClick = () => {
     setSettingStatus("c");
   };
-  const handleSettingsClick = () => {
-    setSettingStatus("d");
-  };
 
   return (
     <div>
@@ -36,15 +33,12 @@ const Settings = () => {
         label1="Account"
         label2="My Groups"
         label3="My Events"
-        label4="Settings"
         icon1={AccountIconPurple}
         icon2={MyGroups1}
         icon3={MyEvents1}
-        icon4={SettingsMain}
         onClick1={handleAccountClick}
         onClick2={handleMyGroupsClick}
         onClick3={handleMyEventsClick}
-        onClick4={handleSettingsClick}
         selectedButton
       />
       <div className="inside-settings">
@@ -54,8 +48,6 @@ const Settings = () => {
           <MyGroups />
         ) : settingStatus === "c" ? (
           <MyEvents />
-        ) : settingStatus === "d" ? (
-          <SettingsMain />
         ) : (
           <div />
         )}

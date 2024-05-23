@@ -8,19 +8,32 @@ export const InputDesc = ({
   onChange,
   name,
   defaultValue,
+  isTextArea = false,
 }) => {
   return (
     <div className="input-text">
       <label htmlFor="input">{label}</label>
-      <input
-        className="desc"
-        type="text"
-        placeholder={placeholder}
-        value={value}
-        onChange={onChange}
-        name={name}
-        defaultValue={defaultValue}
-      />
+      {isTextArea ? (
+        <textarea
+          className="desc textarea"
+          rows={7}
+          placeholder={placeholder}
+          value={value}
+          onChange={onChange}
+          name={name}
+          defaultValue={defaultValue}
+        />
+      ) : (
+        <input
+          className="desc"
+          type="text"
+          placeholder={placeholder}
+          value={value}
+          onChange={onChange}
+          name={name}
+          defaultValue={defaultValue}
+        />
+      )}
     </div>
   );
 };

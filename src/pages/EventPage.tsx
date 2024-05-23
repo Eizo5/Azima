@@ -16,13 +16,19 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { EventType } from "../data/types";
 import useEvent from "../hooks/eventHook";
+
+import useAuthentication from "../hooks/userHook";
 const EventPage = () => {
   const [eventData, setEventData] = useState<EventType | null>(null);
   const [joinStatus, setJoinStatus] = useState("None");
-  const [isAdmin, setIsAdmin] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isJoined, setIsJoined] = useState(false);
+  const [isFull, setIsFull] = useState(false);
+  const [isRequested, setIsRequested] = useState(false);
   const [isConAllowed, setIsConAllowed] = useState(false);
   const { id } = useParams();
-  const { getEventData } = useEvent();
+  const { getEventData, joinEvent, sendConRequest } = useEvent();
+  const { user } = useAuthentication();
 
   const eventInfo = [
     { imgSrc: Location, info: eventData?.location },
@@ -35,9 +41,24 @@ const EventPage = () => {
     { imgSrc: Date, info: eventData?.event_date + " " + eventData?.time },
   ];
 
+  const handleJoinClick = (e: any) => {
+    e.preventDefault();
+    !isJoined && joinEvent(id, user?.ID);
+    setIsJoined(true);
+  };
+
+  const handleContributeReq = (e: any) => {
+    e.preventDefault();
+    !isRequested && sendConRequest(id, user?.ID);
+    setIsRequested(true);
+  };
   useEffect(() => {
     getEventData(id).then((res) => setEventData(res));
-  });
+    if (!eventData?.event_capacity || eventData?.event_capacity <= 0) {
+      // Handle the case where event_capacity is undefined or less than or equal to 0
+      setIsFull(true);
+    }
+  }, []);
 
   return (
     <div>
@@ -50,21 +71,27 @@ const EventPage = () => {
       >
         <div className="top-part">
           <h1>{eventData?.name}</h1>
-          {joinStatus !== "Member" && !isAdmin && (
-            <OurButton
-              label={joinStatus === "None" ? "Join" : "Request Sent"}
-              onClick={() => {
-                setJoinStatus("Pending");
-              }}
-              variant="transparent"
-              thin
-              disabled={joinStatus === "Pending"}
-            />
+          {!isAdmin && (
+            <div className="admin-buttons">
+              <OurButton
+                label={!isJoined ? "Join" : "Joined"}
+                onClick={handleJoinClick}
+                variant="transparent"
+                thin
+                disabled={isJoined}
+              />
+              <OurButton
+                label="Contribute"
+                thin
+                variant="transparent"
+                onClick={handleContributeReq}
+                disabled={isRequested}
+              />
+            </div>
           )}
           {isAdmin && (
             <div className="admin-buttons">
               <OurButton label="Join" thin variant="transparent" />
-              <OurButton label="Contribute" thin variant="transparent" />
             </div>
           )}
         </div>

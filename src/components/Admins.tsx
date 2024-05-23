@@ -12,7 +12,8 @@ const Admins = () => {
 
   useEffect(() => {
     getAdmins(id).then((res) => setAdmins(res));
-  });
+  }, []);
+
   return (
     <div>
       <h1 className="settings-header">Admins</h1>
@@ -21,6 +22,8 @@ const Admins = () => {
           username={admin.username}
           imgUrl={admin.profile_image}
           memberId={admin.ID}
+          admins={admins}
+          setAdmins={setAdmins}
         />
       ))}
     </div>

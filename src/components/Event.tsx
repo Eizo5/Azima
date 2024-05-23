@@ -8,7 +8,7 @@ export const Event = ({ label, imageUrl, id, event }) => {
     <div
       className="event"
       onClick={() =>
-        navigate(event === "event" ? `/EventPage/${id}` : `GroupPage/${id}`)
+        navigate(event === "event" ? `/EventPage/${id}` : `/GroupPage/${id}`)
       }
     >
       <img className="event-image" src={imageUrl} alt="" />

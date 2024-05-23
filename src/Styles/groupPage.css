@@ -8,6 +8,17 @@
   color: white;
 }
 
+.member-hover:hover {
+  cursor: pointer;
+}
+.banned-group {
+  margin-top: 20rem;
+  margin-bottom: 20rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .top-part {
   display: flex;
   justify-content: space-between;

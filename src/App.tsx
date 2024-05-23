@@ -13,6 +13,7 @@ import EventPage from "./pages/EventPage";
 import ImageBackground from "./assets/ImageBackground.png";
 import GroupImage from "./assets/groupimg.png";
 import GroupSettings from "./pages/GroupSettings";
+import GroupMembers from "./pages/GroupMembers";
 
 export default function App() {
   return (
@@ -32,6 +33,7 @@ export default function App() {
           <Route path="/EventPage/:id" element={<EventPage />} />
           <Route path="/Settings" element={<Settings />} />
           <Route path="/GroupSettings/:id" element={<GroupSettings />} />
+          <Route path="/GroupMembers/:id" element={<GroupMembers />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

@@ -50,10 +50,6 @@ export const Footer = () => {
           <img src={GooglePlay} alt="" className="google" />
           <img src={AppStore} alt="" className="appstore" />
         </div>
-
-        <div>
-          <Dropdown />
-        </div>
       </div>
     </footer>
   );

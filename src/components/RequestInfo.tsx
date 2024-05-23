@@ -4,30 +4,30 @@ import OurButton from "./OurButton";
 import { useParams } from "react-router-dom";
 import useGroup from "../hooks/groupHook";
 
-const AdminInfo = ({ username, imgUrl, memberId, admins, setAdmins }) => {
+const RequestInfo = ({ username, imgUrl, memberId }) => {
   const { id } = useParams();
   const { removeAdmin } = useGroup();
 
   const removeAdminClick = (e: any) => {
     e.preventDefault();
     removeAdmin(memberId, id);
-    setAdmins(() => admins.filter(({ ID }) => memberId !== ID));
     console.log(id);
   };
 
   return (
     <div>
-      <div className="member-container">
+      <div className="member-container-group">
         <div className="image-name-container-member">
           <img src={imgUrl} className="image-member-info" />
           <h1 className="member-name bold">{username}</h1>
         </div>
         <div className="buttons-member-info">
-          <OurButton label="Demote" thin onClick={removeAdminClick} />
+          <OurButton label="Accept" thin onClick={() => {}} />
+          <OurButton label="Reject" variant="alert" thin onClick={() => {}} />
         </div>
       </div>
     </div>
   );
 };
 
-export default AdminInfo;
+export default RequestInfo;

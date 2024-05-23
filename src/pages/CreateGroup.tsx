@@ -15,11 +15,13 @@ import "../Styles/creategroup.css";
 
 import imgHolder from "../assets/EventImage.png";
 import useGroup from "../hooks/groupHook";
+import useAuthentication from "../hooks/userHook";
 
 const CreateGroup = () => {
   const [publicId, setPublicId] = useState("");
   const [cloudName] = useState("dkgrr55re");
   const [uploadPreset] = useState("v6wusflm");
+  const { user } = useAuthentication();
   const [uwConfig] = useState({
     cloudName,
     uploadPreset,
@@ -44,6 +46,7 @@ const CreateGroup = () => {
     is_private_group: false,
     is_online: false,
     is_f2f: false,
+    owner_id: user?.ID || "",
     categories: [],
   });
 
@@ -61,6 +64,11 @@ const CreateGroup = () => {
   };
   console.log(groupData);
 
+  useEffect(() => {
+    console.log(groupData);
+    console.log(user?.ID);
+    setGroupData({ ...groupData, owner_id: user?.ID || "" });
+  }, []);
   useEffect(() => {
     // Fetch the profile image URL using the publicId and update the image source
     if (publicId) {

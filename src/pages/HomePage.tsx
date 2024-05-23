@@ -7,6 +7,7 @@ import { IntroPicture } from "../components/IntroPicture";
 import OurButton from "../components/OurButton";
 import { EventSlider } from "../components/EventSlider";
 import axios from "axios";
+import useGroup from "../hooks/groupHook";
 
 import { useEffect, useState } from "react";
 import useEvent from "../hooks/eventHook";
@@ -17,13 +18,13 @@ import useAuthentication from "../hooks/userHook";
 
 export default function HomePage() {
   // Variables
-  const { user, preferredGroups } = useAuthentication();
+  const { user, preferredGroups, userGroups } = useAuthentication();
   const [comedyData, setComedyData] = useState([]);
   const [educationData, setEducationData] = useState([]);
   const [sportsData, setSportsData] = useState([]);
   const [religionData, setReligionData] = useState([]);
   const { events } = useEvent();
-
+  userGroups?.map((group) => {});
   // Navigation function
   const navigate = useNavigate();
 
@@ -36,7 +37,7 @@ export default function HomePage() {
       setSportsData(response.data.sports);
       setReligionData(response.data.religion);
     } catch (error) {
-      console.error("404 groups not found");
+      console.error(error);
     }
   };
 
@@ -58,6 +59,9 @@ export default function HomePage() {
 
       {user && (
         <>
+          {userGroups && (
+            <EventSlider object={userGroups} label="Your Groups" />
+          )}
           {preferredGroups && (
             <EventSlider object={preferredGroups} label="Suggested Groups" />
           )}

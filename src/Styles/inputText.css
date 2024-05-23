@@ -27,3 +27,8 @@
 .inputThin {
   width: 35rem;
 }
+
+.textarea {
+  resize: none;
+  padding: 2rem !important;
+}

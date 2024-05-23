@@ -36,10 +36,6 @@ export default function () {
   const [username, setUsername] = useState("");
   const [profile_image, setProfile_image] = useState(`${ImgHolder}`);
   const [birthdate, setBirthdate] = useState("");
-  const [isSportsChecked, setIsSportsChecked] = useState(false);
-  const [isComedyChecked, setIsComedyChecked] = useState(false);
-  const [isEducationChecked, setIsEducationChecked] = useState(false);
-  const [isReligionChecked, setIsReligionChecked] = useState(false);
   const [preferences, setPreferences] = useState<number[]>([]);
 
   // State contorl for Cloudinary
@@ -107,17 +103,6 @@ export default function () {
       // If present, remove it from the array
       setPreferences(preferences.filter((pref) => pref !== value));
     }
-
-    /*  if (preferences.includes(value)) {
-      // If value is already in preferences array, remove it
-      setPreferences(preferences.filter((pref) => pref !== value));
-      console.log("Prefrence added");
-    } else {
-      // If value is not in preferences array, add it
-      setPreferences([...preferences, value]);
-      console.log("Prefrence added new");
-    }
-    */
   };
 
   // Validate the email address

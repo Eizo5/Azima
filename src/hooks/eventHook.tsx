@@ -30,11 +30,12 @@ const useEvent = () => {
 
   const createEvent = async (eventData: any) => {
     try {
+      console.log("Navigated");
       const response = await axios.post(
         "http://localhost:9000/createEvent",
         eventData
       );
-
+      console.log("Navigated2");
       setEvent(() => response.data);
 
       navigate(`/EventPage/${response.data.event_id}`);
@@ -55,7 +56,33 @@ const useEvent = () => {
       console.error(error);
     }
   };
-  return { event, createEvent, getEventData };
+
+  const joinEvent = async (event_id: string | undefined, user_id: any) => {
+    try {
+      const response = await axios.put(
+        `http://localhost:9000/joinEvent/${event_id}`,
+        { user_id }
+      );
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const sendConRequest = async (event_id: any, user_id: any) => {
+    try {
+      const response = await axios.put(`http://localhost:9000/sendConRequest`, {
+        event_id,
+        user_id,
+      });
+
+      return response.data;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  return { event, createEvent, getEventData, joinEvent, sendConRequest };
 };
 
 export default useEvent;

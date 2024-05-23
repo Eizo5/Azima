@@ -33,6 +33,9 @@ const Overview = () => {
     // maxImageWidth: 2000, //Scales the image down to a width of 2000 pixels before uploading
     // theme: "purple", //change to a purple theme
   });
+  const [defaultCategories, setDefaultCategories] = useState<
+    { value: string; label: string; category_id: number }[]
+  >([]);
 
   const [groupData, setGroupData] = useState({
     name: "",
@@ -50,12 +53,27 @@ const Overview = () => {
     setGroupData({ ...groupData, [e.target.name]: e.target.value });
   };
 
-  const handleSaveClick = () => {
+  const handleSaveClick = (e: any) => {
+    e.preventDefault();
+
     updateGroup(groupData);
   };
   useEffect(() => {
-    getGroup(id).then((res) => setGroupData(res));
-  });
+    getGroup(id).then((res) => {
+      setGroupData({
+        ...res,
+        categories: res.categories.map(({ category_id }) => category_id),
+      });
+      setDefaultCategories(
+        res?.categories?.map(({ category_id, name }) => ({
+          value: name,
+          label: name,
+          category_id,
+        }))
+      );
+    });
+  }, []);
+
   useEffect(() => {
     // Fetch the profile image URL using the publicId and update the image source
     if (publicId) {
@@ -86,7 +104,7 @@ const Overview = () => {
               placeholder={groupData?.name}
               name="name"
               onChange={handleInputChange}
-              defaultValue={groupData.name}
+              defaultValue={groupData?.name}
             />
           </div>
         </div>
@@ -95,8 +113,9 @@ const Overview = () => {
             label="Description"
             placeholder={groupData?.description}
             name="description"
-            defaultValue={groupData.description}
+            defaultValue={groupData?.description}
             onChange={handleInputChange}
+            isTextArea
           />
         </div>
         <div className="checkboxes-dropdowns-container">
@@ -107,7 +126,7 @@ const Overview = () => {
               onChange={() =>
                 setGroupData({
                   ...groupData,
-                  is_adult_only: !groupData.is_adult_only,
+                  is_adult_only: !groupData?.is_adult_only,
                 })
               }
             />
@@ -117,7 +136,7 @@ const Overview = () => {
               onChange={() =>
                 setGroupData({
                   ...groupData,
-                  is_private_group: !groupData.is_private_group,
+                  is_private_group: !groupData?.is_private_group,
                 })
               }
             />
@@ -140,16 +159,19 @@ const Overview = () => {
               multiSelect={true}
               label="Events Type"
             />
+
             <Dropdown
               list={categories}
               multiSelect={true}
               label="Group Type"
-              onChange={(option) =>
+              value={defaultCategories}
+              onChange={(option) => {
                 setGroupData({
                   ...groupData,
                   categories: option.map(({ category_id }) => category_id),
-                })
-              }
+                });
+                setDefaultCategories(option);
+              }}
             />
           </div>
         </div>

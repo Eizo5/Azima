@@ -4,11 +4,14 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 // Types
-import { Group, User, UserSignUp } from "../data/types";
+import { Group, User, UserSignUp, UserGroup } from "../data/types";
 
 const useAuthentication = (): {
   user: User | null;
-  preferredGroups: Group | null;
+  preferredGroups: Group[] | null;
+  userGroups: UserGroup[] | null;
+  userOwnerGroups: Group[] | null;
+  userAdminGroups: Group[] | null;
   register: (e: React.FormEvent<HTMLFormElement>, formData: UserSignUp) => void;
   login: (
     e: React.FormEvent<HTMLFormElement>,
@@ -16,12 +19,15 @@ const useAuthentication = (): {
     password: string
   ) => void;
   logout: () => void;
+  updateUser: (user_id: number | undefined, userData: any) => void;
 } => {
   const navigate = useNavigate();
 
   const [user, setUser] = useState<User | null>(null);
-  const [preferredGroups, setPreferredGroups] = useState<Group | null>(null);
-
+  const [preferredGroups, setPreferredGroups] = useState<Group[] | null>(null);
+  const [userGroups, setUserGroups] = useState<UserGroup[] | null>(null);
+  const [userOwnerGroups, setUserOwnerGroups] = useState<Group[] | null>(null);
+  const [userAdminGroups, setUserAdminGroups] = useState<Group[] | null>(null);
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     const groups = localStorage.getItem("preferredGroups");
@@ -32,6 +38,12 @@ const useAuthentication = (): {
       setPreferredGroups(() => JSON.parse(groups));
     }
   }, []);
+
+  useEffect(() => {
+    user && getUserGroups(user?.ID);
+    user && getUserOwnerGroups(user?.ID);
+    user && getUserAdminGroups(user?.ID);
+  }, [user]);
 
   const register = async (
     e: React.FormEvent<HTMLFormElement>,
@@ -105,7 +117,60 @@ const useAuthentication = (): {
     setPreferredGroups(null);
   };
 
-  return { user, preferredGroups, register, login, logout };
+  const getUserGroups = async (user_id: number | undefined) => {
+    try {
+      await axios
+        .post(`http://localhost:9000/userGroups`, {
+          user_id,
+        })
+        .then((res) => setUserGroups(() => res.data));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getUserOwnerGroups = async (user_id: any) => {
+    try {
+      await axios
+        .get(`http://localhost:9000/myOwnerGroups/${user_id}`)
+        .then((res) => setUserOwnerGroups(() => res.data));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getUserAdminGroups = async (user_id: any) => {
+    try {
+      await axios
+        .get(`http://localhost:9000/myAdminGroups/${user_id}`)
+        .then((res) => setUserAdminGroups(() => res.data));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const updateUser = async (user_id: number | undefined, userData: User) => {
+    try {
+      const response = await axios.put(
+        `http://localhost:9000/updateUser/${user_id}`,
+        userData
+      );
+      return response.data;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  return {
+    user,
+    preferredGroups,
+    userGroups,
+    userOwnerGroups,
+    userAdminGroups,
+    register,
+    login,
+    logout,
+    updateUser,
+  };
 };
 
 export default useAuthentication;

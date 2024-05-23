@@ -1,28 +1,45 @@
 import OurButton from "./OurButton";
 import { Event } from "./Event";
 import Test from "../assets/Eid.png";
+import useAuthentication from "../hooks/userHook";
+import { useEffect } from "react";
 const MyGroups = () => {
+  const { userOwnerGroups, userAdminGroups, userGroups } = useAuthentication();
+  useEffect(() => {
+    console.log(userGroups, userAdminGroups, userOwnerGroups);
+  });
   return (
     <div>
       <OurButton position="right" label="Create Group" />
       <h1 className="bold set-label">Owner</h1>
       <div className="events-together">
-        <Event label="Test" imageUrl={Test} />
-        <Event label="Test" imageUrl={Test} />
+        {userOwnerGroups?.map((group) => (
+          <Event
+            label={group.name}
+            imageUrl={group.group_image}
+            id={group.group_id}
+          />
+        ))}
       </div>
       <h1 className="bold set-label">Admin</h1>
       <div className="events-together">
-        <Event label="Test" imageUrl={Test} />
-        <Event label="Test" imageUrl={Test} />
-        <Event label="Test" imageUrl={Test} />
+        {userAdminGroups?.map((group) => (
+          <Event
+            label={group.name}
+            imageUrl={group.group_image}
+            id={group.group_id}
+          />
+        ))}
       </div>
-      <h1 className="bold set-label">Admin</h1>
+      <h1 className="bold set-label">Member</h1>
       <div className="events-together">
-        <Event label="Test" imageUrl={Test} />
-        <Event label="Test" imageUrl={Test} />
-        <Event label="Test" imageUrl={Test} />
-        <Event label="Test" imageUrl={Test} />
-        <Event label="Test" imageUrl={Test} />
+        {userGroups?.map((group) => (
+          <Event
+            label={group.name}
+            imageUrl={group.group_image}
+            id={group.group_id}
+          />
+        ))}
       </div>
     </div>
   );

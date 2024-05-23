@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 import { Group } from "../data/types";
+import { user } from "../data/helpers";
 
 const useGroup = () => {
   const [group, setGroup] = useState({});
@@ -31,6 +32,8 @@ const useGroup = () => {
       const response = await axios.get(
         `http://localhost:9000/getGroup/${group_id}`
       );
+
+      console.log(response.data);
 
       return response.data;
     } catch (error) {
@@ -60,12 +63,33 @@ const useGroup = () => {
       console.error("404 Group Member couldn't be fetched");
     }
   };
+  const getGroupRequests = async (group_id: any) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:9000/getGroupReqs/${group_id}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error(error);
+    }
+  };
   const getGroupEvents = async (group_id: any) => {
     try {
       const response = await axios.get(
         `http://localhost:9000/getGroupEvents/${group_id}`
       );
 
+      return response.data;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getGroupPastEvents = async (group_id: any) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:9000/getPastEvents/${group_id}`
+      );
       return response.data;
     } catch (error) {
       console.error(error);
@@ -90,10 +114,11 @@ const useGroup = () => {
   const updateGroup = async (groupData: any) => {
     try {
       const response = await axios.put(
-        `http://localhost:9000/banMember`,
+        `http://localhost:9000/updateGroup`,
         groupData
       );
 
+      alert("Info updated successfully");
       return response.data;
     } catch (error) {
       console.error(error);
@@ -157,23 +182,42 @@ const useGroup = () => {
         `http://localhost:9000/BannedMembers/${group_id}`
       );
       return response.data;
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      console.error(error.response.data.msg);
     }
   };
+
+  const joinGroup = async (user_id: any, group_id: any) => {
+    try {
+      const response = await axios.post(`http://localhost:9000/joinGroup`, {
+        user_id,
+        group_id,
+      });
+
+      console.log(response.data.msg);
+    } catch (error: any) {
+      console.error(error.response.data.msg);
+    }
+  };
+
   return {
     group,
     categories,
     createGroup,
     getGroup,
     getGroupMembers,
-    banMember,
+    getGroupEvents,
+    getGroupPastEvents,
     getBannedMembers,
+    getGroupRequests,
+    getAdmins,
+    banMember,
+    joinGroup,
     removeBan,
     assignAdmin,
-    getAdmins,
+
     removeAdmin,
-    getGroupEvents,
+
     updateGroup,
   };
 };

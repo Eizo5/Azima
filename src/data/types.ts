@@ -38,7 +38,22 @@ interface Group {
   is_private_group: boolean;
   is_online: boolean;
   is_f2f: boolean;
+  owner_id: number;
   categories: number[];
+}
+interface UserGroup {
+  group_id: number;
+  name: string;
+  location: "string";
+  description: string | null;
+  group_image: string;
+  is_adult_only: boolean;
+  is_private_group: boolean;
+  is_online: boolean;
+  is_f2f: boolean;
+  is_admin: boolean;
+  is_banned: boolean;
+  is_pending: boolean;
 }
 
 interface GroupMembers {
@@ -80,4 +95,4 @@ interface EventType {
   description: string;
 }
 
-export type { User, UserSignUp, Group, GroupMembers, EventType };
+export type { User, UserSignUp, Group, GroupMembers, EventType, UserGroup };
