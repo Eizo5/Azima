@@ -55,3 +55,13 @@
   display: flex;
   gap: 2rem;
 }
+
+.profile-image {
+  position: relative;
+  left: 100rem;
+  bottom: 30rem;
+  width: 30rem;
+  height: 30rem;
+  border-radius: 100rem;
+  object-fit: cover;
+}

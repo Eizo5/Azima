@@ -10,12 +10,10 @@ const MemberInfo = ({ username, imgUrl, memberId }) => {
 
   const banMemberClick = (e: any) => {
     banMember(memberId, id);
-    console.log("member banned", username, id, memberId);
   };
 
   const assignAdminClick = () => {
     assignAdmin(memberId, id);
-    console.log("Member assigned admin", username);
   };
   return (
     <div className="member-container">

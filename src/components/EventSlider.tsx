@@ -1,20 +1,25 @@
-import React from "react";
-import { Event } from "./Event";
-import Eid from "../assets/Eid.png";
-import martin from "../assets/MartinGarrix.png";
-import paint from "../assets/Paintball.png";
-import marmara from "../assets/Marmara.png";
-import "../Styles/eventslider.css";
-import OurButton from "./OurButton";
 import { Swiper, SwiperSlide } from "swiper/react";
-// Import Swiper styles
+import { Navigation } from "swiper/modules";
+
 import "swiper/css";
-import { Navigation, Pagination, Scrollbar, A11y } from "swiper/modules";
 import "swiper/swiper-bundle.css";
 
-import { user, prefferedGroups } from "../data/helpers";
+import { Event } from "./Event";
 
-export const EventSlider = ({ object, label, event }) => {
+import "../Styles/eventslider.css";
+
+interface EventSliderProps {
+  object: any;
+  label: string;
+  isEvent?: boolean;
+}
+
+// Fixed
+export const EventSlider = ({
+  object,
+  label,
+  isEvent = false,
+}: EventSliderProps) => {
   return (
     <div className="event-slider">
       <label htmlFor="slider" className="slider-label">
@@ -32,17 +37,16 @@ export const EventSlider = ({ object, label, event }) => {
         {object?.map((group) => (
           <SwiperSlide>
             <Event
-              event={event && "event"}
+              isEvent={isEvent}
               label={group.name}
               imageUrl={
                 group.group_image ? group.group_image : group.event_image
               }
-              id={group.group_id ? group.group_id : group.event_id}
+              id={isEvent ? group.event_id : group.group_id}
             />
           </SwiperSlide>
         ))}
       </Swiper>
-      <OurButton label="Show more" position="center" />
     </div>
   );
 };

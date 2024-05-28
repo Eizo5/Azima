@@ -1,28 +1,34 @@
-import React, { useState, useEffect, useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import AuthContext from "../AuthContext";
+import { useState, useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
+
+import useAuthentication from "../hooks/userHook";
 
 import OurButton from "./OurButton";
-
-import "../Styles/Navbar.css";
+import NotificationDropDown from "./NotificationDropDown";
 
 import AzimaLogo from "../assets/AzimaLogo.png";
 import AccountIcon from "../assets/AccountIcon.png";
 import LogoutIcon from "../assets/Logout.png";
 import Notifications from "../assets/Notifications.png";
 import Settings from "../assets/Settings.png";
-import { Link } from "react-router-dom";
 
-import useAuthentication from "../hooks/userHook";
+import "../Styles/Navbar.css";
 
-const NavBar = ({ navType }) => {
+interface NavBarProps {
+  navType: string;
+}
+
+// Fixed
+const NavBar = ({ navType }: NavBarProps) => {
   const [scrolled, setScrolled] = useState(false);
+  const [dropDown, setDropDown] = useState(false);
 
   const { user, logout } = useAuthentication();
 
   //Navigation function
   const navigate = useNavigate();
 
+  // Create bg color effect on scroll
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 400) {
@@ -40,6 +46,19 @@ const NavBar = ({ navType }) => {
     };
   }, []);
 
+  // Navigation options
+  const options = [
+    {
+      to: "",
+      imgSrc: Notifications,
+      alt: "Notifications",
+      onClick: () => setDropDown(!dropDown),
+    },
+    { to: `/UserProfile/${user?.ID}`, imgSrc: AccountIcon, alt: "Profile" },
+    { to: "/Settings", imgSrc: Settings, alt: "Account" },
+    { to: "/home", imgSrc: LogoutIcon, alt: "Logout", onClick: logout },
+  ];
+
   return (
     <div className={`${scrolled && "scrolled"} ${navType}`}>
       <Link to="/">
@@ -48,31 +67,11 @@ const NavBar = ({ navType }) => {
 
       {user ? (
         <div className="temp">
-          <li className="nav-item">
-            <Link to="/Signup">
-              <img src={Notifications} alt="Notifications" />
+          {options.map(({ to, imgSrc, alt, onClick }) => (
+            <Link to={to} className="nav-item" title={alt}>
+              <img src={imgSrc} alt={alt} onClick={onClick} />
             </Link>
-          </li>
-          <li className="nav-item">
-            <Link to="/Signin">
-              <img src={AccountIcon} alt="Account Icon" />
-            </Link>
-          </li>
-          <li className="nav-item">
-            <Link to="/Settings">
-              <img className="logo" src={Settings} alt="Azima Logo" />
-            </Link>
-          </li>
-          <li className="nav-item">
-            <Link to="/home">
-              <img
-                src={LogoutIcon}
-                alt="Logout Icon"
-                className="logo"
-                onClick={logout}
-              />
-            </Link>
-          </li>
+          ))}
         </div>
       ) : (
         <div className="loginButtons">
@@ -88,28 +87,7 @@ const NavBar = ({ navType }) => {
           />
         </div>
       )}
-      {/* <div className="temp">
-            <li className="nav-item">
-              <Link to="/Signup">
-                <img src={Notifications} alt="Azima Logo" />
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link to="/Signin">
-                <img src={AccountIcon} alt="Azima Logo" />
-              </Link>
-            </li>
-            <li className="nav-item">
-              <a href="#">
-                <img src={Settings} alt="Azima Logo" />
-              </a>
-            </li>
-            <li className="nav-item">
-              <a href="#">
-                <img src={LogoutIcon} alt="Azima Logo" />
-              </a>
-            </li>
-          </div> */}
+      {dropDown && <NotificationDropDown imgUrl={Notifications} />}
     </div>
   );
 };

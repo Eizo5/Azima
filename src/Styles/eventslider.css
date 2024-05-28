@@ -1,12 +1,11 @@
 .slider {
   display: flex;
-  height: 75%;
   justify-content: center;
   flex-direction: row;
 }
+
 .slider-label {
-  margin-left: 5%;
-  margin-top: 5rem;
+  margin-bottom: 3rem;
   font-size: 45px;
   color: rgb(86, 17, 113);
 }
@@ -16,4 +15,13 @@
 .swiper-container-rtl .swiper-button-prev,
 .swiper-container-rtl .swiper-button-next {
   color: rgba(86, 17, 113, 1);
+  font-weight: 800;
+}
+
+.swiper-wrapper {
+  align-items: center;
+}
+
+.event-slider {
+  width: 100%;
 }

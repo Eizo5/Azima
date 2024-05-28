@@ -3,7 +3,6 @@ import SideNav from "../components/SideNav";
 import AccountSettings from "../components/AccountSettings";
 import MyGroups from "../components/MyGroups";
 import MyEvents from "../components/MyEvents";
-import SettingsMain from "../components/SettingsMain";
 
 import AccountIconPurple from "../assets/AccountIconPurple.png";
 import MyGroups1 from "../assets/MyGroups.png";

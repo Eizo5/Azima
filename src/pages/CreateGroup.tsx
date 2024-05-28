@@ -47,7 +47,7 @@ const CreateGroup = () => {
     is_online: false,
     is_f2f: false,
     owner_id: user?.ID || "",
-    categories: [],
+    categories: [1, 2],
   });
 
   const { categories, createGroup } = useGroup();
@@ -108,10 +108,12 @@ const CreateGroup = () => {
                   { value: "online", label: "Online" },
                   { value: "f2f", label: "f2f" },
                 ]}
-                onChange={(options) =>
+                onChange={(options: any) =>
                   setGroupData({
                     ...groupData,
-                    is_f2f: options.some((option) => option.value === "f2f"),
+                    is_f2f: options.some(
+                      (option: any) => option.value === "f2f"
+                    ),
                     is_online: options.some(
                       (option) => option.value === "online"
                     ),

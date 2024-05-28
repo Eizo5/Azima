@@ -1,4 +1,3 @@
-import React from "react";
 import "../Styles/ourbutton.css";
 
 interface OurButtonProps {
@@ -12,7 +11,7 @@ interface OurButtonProps {
   type?: "reset" | "submit" | "button";
 }
 
-const OurButton: React.FC<OurButtonProps> = ({
+const OurButton = ({
   label,
   variant,
   position,
@@ -21,7 +20,7 @@ const OurButton: React.FC<OurButtonProps> = ({
   disabled,
   id,
   type = "button",
-}) => {
+}: OurButtonProps) => {
   return (
     <div className={`${position}`}>
       <button

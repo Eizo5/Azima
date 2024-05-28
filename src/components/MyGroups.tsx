@@ -5,9 +5,7 @@ import useAuthentication from "../hooks/userHook";
 import { useEffect } from "react";
 const MyGroups = () => {
   const { userOwnerGroups, userAdminGroups, userGroups } = useAuthentication();
-  useEffect(() => {
-    console.log(userGroups, userAdminGroups, userOwnerGroups);
-  });
+
   return (
     <div>
       <OurButton position="right" label="Create Group" />

@@ -12,7 +12,6 @@ const AdminInfo = ({ username, imgUrl, memberId, admins, setAdmins }) => {
     e.preventDefault();
     removeAdmin(memberId, id);
     setAdmins(() => admins.filter(({ ID }) => memberId !== ID));
-    console.log(id);
   };
 
   return (

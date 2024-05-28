@@ -3,7 +3,6 @@ import "../Styles/checkbox.css";
 const Checkbox = ({ label, checked, onChange }) => {
   const handleCheckedChange = (event: any) => {
     // Access the checkbox's checked state from the event object
-    console.log("Checkbox is checked:", event.target.checked);
   };
 
   return (

@@ -1,3 +1,13 @@
+import { user } from "./helpers";
+
+interface Notification {
+  group_id: number;
+  message: string;
+  not_date: string;
+  not_id: number;
+  type: number;
+}
+
 interface User {
   ID: number;
   email: string;
@@ -14,6 +24,25 @@ interface User {
   language: string | null;
   profile_image: string;
   username: string;
+}
+interface EventUser {
+  ID: number;
+  email: string;
+  name: string;
+  surname: string;
+  password: string;
+  birthdate: string;
+  is_email_notifications_on: boolean;
+  is_email_private: boolean;
+  is_name_private: boolean;
+  is_sms_notifications_on: boolean;
+  is_theme_dark: boolean;
+  is_updates_notifications_on: boolean;
+  language: string | null;
+  profile_image: string;
+  username: string;
+  is_con_pending: boolean;
+  is_contributor: boolean;
 }
 
 interface UserSignUp {
@@ -94,5 +123,43 @@ interface EventType {
   location: string;
   description: string;
 }
+interface UserEvents {
+  age_restriction: number;
+  currency: string;
+  description: string;
+  event_capacity: number;
+  event_date: string;
+  event_id: number;
+  event_image: string;
+  group_id: number;
+  guests: string;
+  is_con_pending: boolean;
+  is_contributer: boolean;
+  is_contribution_allowed: boolean;
+  is_event_private: boolean;
+  location: string;
+  name: string;
+  return_policy: string;
+  rules: string;
+  ticket_included_items: string;
+  ticket_not_included_items: string;
+  ticket_price: string;
+  time: string;
+}
+interface AutResponse {
+  user: User;
+  groups: Group[];
+}
 
-export type { User, UserSignUp, Group, GroupMembers, EventType, UserGroup };
+export type {
+  User,
+  EventUser,
+  UserSignUp,
+  UserEvents,
+  Group,
+  GroupMembers,
+  EventType,
+  UserGroup,
+  AutResponse,
+  Notification,
+};

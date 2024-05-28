@@ -4,14 +4,28 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 // Types
-import { Group, User, UserSignUp, UserGroup } from "../data/types";
+import {
+  Group,
+  User,
+  UserSignUp,
+  UserGroup,
+  EventType,
+  UserEvents,
+  Notification,
+} from "../data/types";
+import { set } from "@cloudinary/url-gen/actions/variable";
 
 const useAuthentication = (): {
   user: User | null;
+  setUser: (user: User) => void;
+  preferences: number[] | null;
+  setPreferences: (preferences: number[] | null) => void;
   preferredGroups: Group[] | null;
   userGroups: UserGroup[] | null;
   userOwnerGroups: Group[] | null;
   userAdminGroups: Group[] | null;
+  userEvents: UserEvents[] | null;
+  notifications: Notification[] | null;
   register: (e: React.FormEvent<HTMLFormElement>, formData: UserSignUp) => void;
   login: (
     e: React.FormEvent<HTMLFormElement>,
@@ -20,29 +34,54 @@ const useAuthentication = (): {
   ) => void;
   logout: () => void;
   updateUser: (user_id: number | undefined, userData: any) => void;
+  getUser: (user_id: string | undefined) => void;
+  getUserGroupsDiff: (user_id: any) => void;
+  getUserOwnerGroupsDiff: (user_id: any) => void;
+  getUserAdminGroupsDiff: (user_id: any) => void;
 } => {
   const navigate = useNavigate();
 
   const [user, setUser] = useState<User | null>(null);
+  const [userEvents, setUserEvents] = useState<UserEvents[] | null>(null);
   const [preferredGroups, setPreferredGroups] = useState<Group[] | null>(null);
+  const [preferences, setPreferences] = useState<number[] | null>(null);
   const [userGroups, setUserGroups] = useState<UserGroup[] | null>(null);
+  const [notifications, setNotifications] = useState<Notification[] | null>(
+    null
+  );
+
   const [userOwnerGroups, setUserOwnerGroups] = useState<Group[] | null>(null);
   const [userAdminGroups, setUserAdminGroups] = useState<Group[] | null>(null);
+
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     const groups = localStorage.getItem("preferredGroups");
-    if (storedUser) {
-      setUser(() => JSON.parse(storedUser));
+    const storedUserEvents = localStorage.getItem("userEvents");
+
+    const storedPreferences = localStorage.getItem("preferences");
+    if (storedUser && storedUser !== "undefined") {
+      setUser(() => storedUser && JSON.parse(storedUser));
     }
     if (groups) {
-      setPreferredGroups(() => JSON.parse(groups));
+      setPreferredGroups(() => groups && JSON.parse(groups));
     }
+    if (storedPreferences) {
+      setPreferences(() => storedPreferences && JSON.parse(storedPreferences));
+    }
+
+    if (storedUserEvents) {
+      setUserEvents(() => storedUserEvents && JSON.parse(storedUserEvents));
+    }
+    console.log("userEventshook", userEvents);
   }, []);
 
   useEffect(() => {
     user && getUserGroups(user?.ID);
     user && getUserOwnerGroups(user?.ID);
     user && getUserAdminGroups(user?.ID);
+    user && getUserEvents(user?.ID);
+    user && getUserNot(user?.ID);
+    console.log("notssss", notifications);
   }, [user]);
 
   const register = async (
@@ -95,10 +134,11 @@ const useAuthentication = (): {
         password,
       });
 
-      const { user, groups } = response.data;
+      const { user, userPreferences, groups } = response.data;
 
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("preferredGroups", JSON.stringify(groups));
+      localStorage.setItem("preferences", JSON.stringify(userPreferences));
 
       navigate("/home");
     } catch (error: any) {
@@ -117,7 +157,7 @@ const useAuthentication = (): {
     setPreferredGroups(null);
   };
 
-  const getUserGroups = async (user_id: number | undefined) => {
+  const getUserGroups = async (user_id: any) => {
     try {
       await axios
         .post(`http://localhost:9000/userGroups`, {
@@ -128,12 +168,34 @@ const useAuthentication = (): {
       console.error(error);
     }
   };
+  const getUserGroupsDiff = async (user_id: any) => {
+    try {
+      const response = await axios.post(`http://localhost:9000/userGroups`, {
+        user_id,
+      });
+
+      return response.data;
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const getUserOwnerGroups = async (user_id: any) => {
     try {
       await axios
         .get(`http://localhost:9000/myOwnerGroups/${user_id}`)
         .then((res) => setUserOwnerGroups(() => res.data));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const getUserOwnerGroupsDiff = async (user_id: any) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:9000/myOwnerGroups/${user_id}`
+      );
+
+      return response.data;
     } catch (error) {
       console.error(error);
     }
@@ -149,27 +211,96 @@ const useAuthentication = (): {
     }
   };
 
+  const getUserAdminGroupsDiff = async (user_id: any) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:9000/myAdminGroups/${user_id}`
+      );
+
+      return response.data;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const updateUser = async (user_id: number | undefined, userData: User) => {
     try {
       const response = await axios.put(
         `http://localhost:9000/updateUser/${user_id}`,
         userData
       );
+      const user = { ...response.data };
+      const userPreferences = response.data.user_preferences;
+
+      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("preferences", JSON.stringify(userPreferences));
+      alert("User updated successfully");
       return response.data;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getUserEvents = async (user_id: number | undefined) => {
+    try {
+      const response = await axios.post(`http://localhost:9000/userEvents`, {
+        user_id,
+      });
+      const result = { ...response.data };
+      localStorage.setItem("userEvents", JSON.stringify(response.data));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getUser = async (user_id: string | undefined) => {
+    try {
+      const response = await axios.post(
+        `http://localhost:9000/userData/${user_id}`,
+        {}
+      );
+      const user = { ...response.data };
+      console.log("userrrr", user);
+      return user;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getUserNot = async (user_id: any) => {
+    try {
+      const response = await axios.post(`http://localhost:9000/getUserNots`, {
+        user_id,
+      });
+
+      setNotifications(() => response.data);
+
+      /*    const user = { ...response.data };
+      console.log("userrrr", user);
+      return user; */
     } catch (error) {
       console.error(error);
     }
   };
   return {
     user,
+    userEvents,
+    setUser,
     preferredGroups,
     userGroups,
+    preferences,
+    setPreferences,
     userOwnerGroups,
     userAdminGroups,
     register,
     login,
     logout,
     updateUser,
+    notifications,
+    getUser,
+    getUserGroupsDiff,
+    getUserAdminGroupsDiff,
+    getUserOwnerGroupsDiff,
   };
 };
 

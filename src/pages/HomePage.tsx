@@ -1,32 +1,27 @@
-import "../Styles/App.css";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-// Components Imports
+import axios from "axios";
+
+import useEvent from "../hooks/eventHook";
+import useAuthentication from "../hooks/userHook";
+
 import NavBar from "../components/navbar";
 import { Footer } from "../components/Footer";
 import { IntroPicture } from "../components/IntroPicture";
 import OurButton from "../components/OurButton";
 import { EventSlider } from "../components/EventSlider";
-import axios from "axios";
-import useGroup from "../hooks/groupHook";
 
-import { useEffect, useState } from "react";
-import useEvent from "../hooks/eventHook";
-
-//import { prefferedGroups } from "../data/helpers";
-import useAuthentication from "../hooks/userHook";
-// Other Imports
+import "../Styles/App.css";
 
 export default function HomePage() {
-  // Variables
-  const { user, preferredGroups, userGroups } = useAuthentication();
+  const { user, preferredGroups, userGroups, userEvents } = useAuthentication();
+  const { events } = useEvent();
+  const navigate = useNavigate();
+
   const [comedyData, setComedyData] = useState([]);
   const [educationData, setEducationData] = useState([]);
   const [sportsData, setSportsData] = useState([]);
   const [religionData, setReligionData] = useState([]);
-  const { events } = useEvent();
-  userGroups?.map((group) => {});
-  // Navigation function
-  const navigate = useNavigate();
 
   const randomGroups = async () => {
     try {
@@ -41,43 +36,51 @@ export default function HomePage() {
     }
   };
 
+  // Groups data for the EventSlider component
+  const groupsData = [
+    { id: 0, label: "Comedy Groups", data: comedyData },
+    { id: 1, label: "Sports Groups", data: sportsData },
+    { id: 2, label: "Education Groups", data: educationData },
+    { id: 3, label: "Religion Groups", data: religionData },
+  ];
+
+  // Get groups
   useEffect(() => {
     randomGroups();
+    console.log("userEvents", userEvents);
   }, []);
-
+  console.log(userGroups, preferredGroups, events, groupsData);
   return (
     <div>
       <NavBar navType="Navbar" />
       <IntroPicture />
-      {user && (
-        <OurButton
-          label="Create Group"
-          position="center"
-          onClick={() => navigate("/CreateGroup")}
-        />
-      )}
 
-      {user && (
-        <>
-          {userGroups && (
-            <EventSlider object={userGroups} label="Your Groups" />
-          )}
-          {preferredGroups && (
-            <EventSlider object={preferredGroups} label="Suggested Groups" />
-          )}
-          {events?.length > 0 && (
-            <EventSlider object={events} label="Your Events" />
-          )}
-        </>
-      )}
+      <div className="home-container">
+        {user && (
+          <>
+            <div className="create-group">
+              <OurButton
+                label="Create Group"
+                position="right"
+                onClick={() => navigate("/CreateGroup")}
+              />
+            </div>
 
-      <EventSlider object={comedyData} label="Comedy Groups" />
-
-      <EventSlider object={sportsData} label="Sports Groups" />
-
-      <EventSlider object={educationData} label="Education Groups" />
-
-      <EventSlider object={religionData} label="Religion Groups" />
+            {userGroups && (
+              <EventSlider object={userGroups} label="Your Groups" />
+            )}
+            {preferredGroups && (
+              <EventSlider object={preferredGroups} label="Suggested Groups" />
+            )}
+            {events?.length > 0 && (
+              <EventSlider object={events} label="Your Events" />
+            )}
+          </>
+        )}
+        {groupsData.map(({ id, data, label }) => (
+          <EventSlider key={id} object={data} label={label} />
+        ))}
+      </div>
 
       <Footer />
     </div>

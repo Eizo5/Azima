@@ -7,24 +7,15 @@ import Checkbox from "./Checkbox";
 import { useEffect, useState } from "react";
 import CloudinaryUploadWidget from "../components/UploadImage";
 import { User } from "../data/types";
+import useGroup from "../hooks/groupHook";
 
 const AccountSettings = ({}) => {
-  const { user, updateUser } = useAuthentication();
+  const { user, updateUser, preferences, setPreferences, setUser } =
+    useAuthentication();
+  const { categories, getCategories } = useGroup();
   const [publicId, setPublicId] = useState("");
   const [cloudName] = useState("dkgrr55re");
   const [uploadPreset] = useState("v6wusflm");
-  const [userData, setUserData] = useState({
-    name: user?.name,
-    surname: user?.surname,
-    password: user?.password,
-    birthdate: user?.birthdate,
-    is_email_notifications_on: user?.is_sms_notifications_on,
-    is_email_private: user?.is_name_private,
-    is_name_private: user?.is_name_private,
-    is_updates_notifications_on: user?.is_updates_notifications_on,
-    profile_image: "",
-    username: user?.username,
-  });
   const [uwConfig] = useState({
     cloudName,
     uploadPreset,
@@ -40,18 +31,17 @@ const AccountSettings = ({}) => {
     // maxImageWidth: 2000, //Scales the image down to a width of 2000 pixels before uploading
     // theme: "purple", //change to a purple theme
   });
-  const [preferences, setPreferences] = useState<number[]>([]);
+  // const [preferences, setPreferences] = useState<number[]>([]);
   const handleInputChange = (e: any) => {
-    setUserData({ ...userData, [e.target.name]: e.target.value });
+    setUser({ ...user, [e.target.name]: e.target.value } as User);
   };
 
   const handleSaveClick = (e: any) => {
-    e.preventDefault();
-
-    updateUser(userData?.ID, userData);
+    console.log({ ...user, preferences });
+    updateUser(user?.ID, { ...user, preferences });
   };
 
-  const handleCheckboxesChange = (value: number) => {
+  /*   const handleCheckboxesChange = (value: number) => {
     if (!preferences.includes(value)) {
       // If not present, add it to the array
       setPreferences([...preferences, value]);
@@ -59,15 +49,16 @@ const AccountSettings = ({}) => {
       // If present, remove it from the array
       setPreferences(preferences.filter((pref) => pref !== value));
     }
-    console.log(preferences);
-  };
+  }; its
+ */
+  let passwordLength = user?.password?.length;
 
-  let passwordLength = userData?.password?.length;
-
+  // Get user data
   useEffect(() => {
-    user && setUserData(user);
-    console.log(user);
-  });
+    getCategories();
+  }, []);
+
+  // Handle user img upload
   useEffect(() => {
     if (publicId) {
       // Construct the Cloudinary image URL with the publicId
@@ -75,68 +66,118 @@ const AccountSettings = ({}) => {
       const imageUrl = `${baseUrl}${publicId}`;
 
       // Update userData state using setUserData
-      setUserData((prevUserData) => ({
-        ...prevUserData,
-        profile_image: imageUrl,
-      }));
-      console.log(userData.profile_image);
-      console.log(imageUrl);
+      setUser({ ...user, profile_image: imageUrl } as User);
     }
   }, [publicId]);
+
   return (
     <>
       <div className="account-container">
         {" "}
         <div className="account-image">
-          <img src={userData?.profile_image} />
+          <img src={user?.profile_image} />
           <CloudinaryUploadWidget
             uwConfig={uwConfig}
             setPublicId={setPublicId}
           />
         </div>
         <div className="info-container">
-          <InputText placeholder={userData?.name} label="Name" />
+          <InputText
+            placeholder={user?.name}
+            label="Name"
+            onChange={handleInputChange}
+            defaultValue={user?.name}
+            name="name"
+          />
 
-          <InputText placeholder={userData?.surname} label="Surname" />
+          <InputText
+            placeholder={user?.surname}
+            label="Surname"
+            onChange={handleInputChange}
+            defaultValue={user?.surname}
+            name="surname"
+          />
+          <InputText
+            placeholder={user?.username}
+            label="Username"
+            onChange={handleInputChange}
+            defaultValue={user?.username}
+            name="username"
+          />
+          <InputText
+            placeholder={user?.birthdate}
+            label="Birthdate"
+            onChange={handleInputChange}
+            defaultValue={user?.birthdate}
+            name="birthdate"
+            date
+          />
 
-          <InputText placeholder={userData?.email} label="Email" />
+          <InputText
+            placeholder={user?.email}
+            label="Email"
+            defaultValue={user?.email}
+          />
           <h3 className="bold">Password</h3>
           <h3>{"*".repeat(passwordLength)}</h3>
           <OurButton thin label="Delete Account" variant="alert" />
         </div>
       </div>
       <div className="checkboxes-signup">
-        <div className="checkboxes-left">
-          <Checkbox
-            label="Sports"
-            checked={preferences.includes(1)}
-            onChange={() => handleCheckboxesChange(1)}
-          />
-          <Checkbox
-            label="Comedy"
-            checked={preferences.includes(2)}
-            onChange={() => handleCheckboxesChange(2)}
-          />{" "}
-        </div>
-        <div className="checkboxes-right">
-          <Checkbox
-            label="Education"
-            checked={preferences.includes(3)}
-            onChange={() => handleCheckboxesChange(3)}
-          />{" "}
-          <Checkbox
-            label="Religion"
-            checked={preferences.includes(4)}
-            onChange={() => handleCheckboxesChange(4)}
-          />{" "}
-        </div>
+        {categories &&
+          categories.map((category) => (
+            <Checkbox
+              key={category?.category_id}
+              label={category?.value}
+              checked={preferences?.includes(category?.category_id)}
+              onChange={() => {
+                const isChecked = preferences?.includes(category?.category_id);
+                isChecked && preferences
+                  ? setPreferences(
+                      preferences?.filter(
+                        (pref) => pref !== category?.category_id
+                      )
+                    )
+                  : setPreferences([...preferences, category?.category_id]);
+              }}
+            />
+          ))}
       </div>
       <h1 className="bold set-label">Privacy</h1>
       <div className="checkbox-div">
-        <Checkbox label="Display my name in groups" />
-        <Checkbox label="Display my email in groups" />
-        <Checkbox label="Send me notifications about updates" />
+        <Checkbox
+          label="Display my name in groups"
+          checked={user?.is_name_private}
+          onChange={() =>
+            setUser({
+              ...user,
+              is_name_private: !user?.is_name_private,
+            } as User)
+          }
+        />
+        <Checkbox
+          label="Display my email in groups"
+          checked={user?.is_email_private}
+          onChange={() =>
+            setUser({
+              ...user,
+              is_email_private: !user?.is_email_private,
+            } as User)
+          }
+        />
+        <Checkbox
+          label="Send me notifications about updates"
+          checked={user?.is_updates_notifications_on}
+          onChange={() =>
+            setUser({
+              ...user,
+              is_updates_notifications_on: !user?.is_updates_notifications_on,
+            } as User)
+          }
+        />
       </div>
+
+      <OurButton label="Save" onClick={handleSaveClick} />
     </>
   );
 };

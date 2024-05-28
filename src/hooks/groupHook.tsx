@@ -6,9 +6,15 @@ import axios from "axios";
 import { Group } from "../data/types";
 import { user } from "../data/helpers";
 
+interface Categories {
+  value: string;
+  label: string;
+  category_id: number;
+}
+
 const useGroup = () => {
   const [group, setGroup] = useState({});
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState<Categories[]>([]);
 
   const navigate = useNavigate();
 
@@ -32,8 +38,6 @@ const useGroup = () => {
       const response = await axios.get(
         `http://localhost:9000/getGroup/${group_id}`
       );
-
-      console.log(response.data);
 
       return response.data;
     } catch (error) {
@@ -78,7 +82,7 @@ const useGroup = () => {
       const response = await axios.get(
         `http://localhost:9000/getGroupEvents/${group_id}`
       );
-
+      console.log(response.data);
       return response.data;
     } catch (error) {
       console.error(error);
@@ -200,6 +204,19 @@ const useGroup = () => {
     }
   };
 
+  const leaveGroup = async (user_id: any, group_id: any) => {
+    try {
+      const response = await axios.post(`http://localhost:9000/leaveGroup`, {
+        user_id,
+        group_id,
+      });
+
+      console.log(response.data.msg);
+    } catch (error: any) {
+      console.error(error.response.data.msg);
+    }
+  };
+
   return {
     group,
     categories,
@@ -215,8 +232,9 @@ const useGroup = () => {
     joinGroup,
     removeBan,
     assignAdmin,
-
+    getCategories,
     removeAdmin,
+    leaveGroup,
 
     updateGroup,
   };

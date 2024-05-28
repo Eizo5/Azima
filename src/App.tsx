@@ -14,6 +14,7 @@ import ImageBackground from "./assets/ImageBackground.png";
 import GroupImage from "./assets/groupimg.png";
 import GroupSettings from "./pages/GroupSettings";
 import GroupMembers from "./pages/GroupMembers";
+import UserProfile from "./pages/UserProfile";
 
 export default function App() {
   return (
@@ -34,6 +35,7 @@ export default function App() {
           <Route path="/Settings" element={<Settings />} />
           <Route path="/GroupSettings/:id" element={<GroupSettings />} />
           <Route path="/GroupMembers/:id" element={<GroupMembers />} />
+          <Route path="/UserProfile/:id" element={<UserProfile />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

@@ -1,6 +1,5 @@
 import NavBar from "../components/navbar";
 import OurButton from "../components/OurButton";
-import { EventSlider } from "../components/EventSlider";
 import { Footer } from "../components/Footer";
 
 import "../Styles/eventpage.css";
@@ -14,20 +13,22 @@ import Date from "../assets/date.png";
 import "../Styles/groupPage.css";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { EventType } from "../data/types";
+import { EventType, EventUser } from "../data/types";
 import useEvent from "../hooks/eventHook";
 
 import useAuthentication from "../hooks/userHook";
+
+import { formatDate } from "../data/helpers";
 const EventPage = () => {
   const [eventData, setEventData] = useState<EventType | null>(null);
-  const [joinStatus, setJoinStatus] = useState("None");
+  //const [eventUsers, setEventUsers] = useState<EventUser[] | null>(null);
+  const [eventUser, setEventUser] = useState<EventUser | null>(null);
+  const [groupPastEvents, setGroupPastEvents] = useState<EventType[]>([]);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [isJoined, setIsJoined] = useState(false);
+  const [conPopup, setConPopup] = useState(false);
   const [isFull, setIsFull] = useState(false);
-  const [isRequested, setIsRequested] = useState(false);
-  const [isConAllowed, setIsConAllowed] = useState(false);
   const { id } = useParams();
-  const { getEventData, joinEvent, sendConRequest } = useEvent();
+  const { getEventData, joinEvent, sendConRequest, getEventUsers } = useEvent();
   const { user } = useAuthentication();
 
   const eventInfo = [
@@ -38,20 +39,33 @@ const EventPage = () => {
     },
     { imgSrc: Comedy, info: "Entertainment " },
     { imgSrc: Members, info: "10 Members " },
-    { imgSrc: Date, info: eventData?.event_date + " " + eventData?.time },
+    {
+      imgSrc: Date,
+      info: formatDate(eventData?.event_date) + " - " + eventData?.time,
+    },
   ];
 
   const handleJoinClick = (e: any) => {
     e.preventDefault();
-    !isJoined && joinEvent(id, user?.ID);
-    setIsJoined(true);
+    /*     console.log("eventData?.event_capacity", eventData?.event_capacity);
+    console.log("id", id);
+    console.log("user?.ID", user?.ID); */
+    !eventUser && joinEvent(id, user?.ID);
   };
 
   const handleContributeReq = (e: any) => {
     e.preventDefault();
-    !isRequested && sendConRequest(id, user?.ID);
-    setIsRequested(true);
+    sendConRequest(id, user?.ID);
   };
+
+  const toggleConPopUp = () => {
+    setConPopup(!conPopup);
+  };
+
+  conPopup
+    ? document.body.classList.add("active-popup")
+    : document.body.classList.remove("active-popup");
+
   useEffect(() => {
     getEventData(id).then((res) => setEventData(res));
     if (!eventData?.event_capacity || eventData?.event_capacity <= 0) {
@@ -60,8 +74,41 @@ const EventPage = () => {
     }
   }, []);
 
+  useEffect(() => {
+    getEventUsers(id).then((res) => {
+      res?.map((eventUser: EventUser) => {
+        if (eventUser.ID === user?.ID) {
+          setEventUser(() => eventUser);
+        }
+      });
+    });
+  }, [user]);
+
   return (
     <div>
+      {conPopup && (
+        <div className="popup">
+          <div className="overlay">
+            <div className="popup-content">
+              <h1>Do you want to help orignize this event</h1>
+              <p>
+                By clicking on the button below you will send a request to the
+                event owner to help organize the event.
+              </p>
+              <OurButton
+                label="Send Request"
+                position="center"
+                thin
+                onClick={handleContributeReq}
+              />
+
+              <button className="close-popup" onClick={toggleConPopUp}>
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <NavBar navType="fnav" />
       <div
         className="img-container"
@@ -74,19 +121,26 @@ const EventPage = () => {
           {!isAdmin && (
             <div className="admin-buttons">
               <OurButton
-                label={!isJoined ? "Join" : "Joined"}
+                label={!eventUser ? "Join" : "Joined"}
                 onClick={handleJoinClick}
                 variant="transparent"
                 thin
-                disabled={isJoined}
+                disabled={eventUser}
               />
-              <OurButton
-                label="Contribute"
-                thin
-                variant="transparent"
-                onClick={handleContributeReq}
-                disabled={isRequested}
-              />
+
+              {eventData?.is_contribution_allowed && eventUser && (
+                <OurButton
+                  label={
+                    eventUser?.is_con_pending ? "Request sent" : "Contribute"
+                  }
+                  thin
+                  variant="transparent"
+                  onClick={toggleConPopUp}
+                  disabled={
+                    eventUser?.is_con_pending || eventUser?.is_contributor
+                  }
+                />
+              )}
             </div>
           )}
           {isAdmin && (

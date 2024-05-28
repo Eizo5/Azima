@@ -11,7 +11,6 @@ const BannedInfo = ({ username, imgUrl, ban }) => {
   const removeBanClick = (e: any) => {
     e.preventDefault();
     removeBan(ban, id);
-    console.log("Member Unbanned");
   };
 
   return (

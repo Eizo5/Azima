@@ -13,7 +13,6 @@ const Members = () => {
     getGroupMembers(id).then((res) => setGroupMembers(res));
   }, []);
 
-  console.log();
   return (
     <div>
       <h1 className="settings-header">Members Management</h1>

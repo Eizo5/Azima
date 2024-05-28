@@ -190,7 +190,7 @@ const CreateEvent = () => {
             <div className="checkboxes">
               <Checkbox
                 label="I want my event to be private 
-(If you disable this it means even people not in your group will be able to see the event and join it)"
+"
                 onChange={() =>
                   setEventData({
                     ...eventData,

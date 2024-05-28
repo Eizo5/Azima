@@ -30,16 +30,15 @@ const useEvent = () => {
 
   const createEvent = async (eventData: any) => {
     try {
-      console.log("Navigated");
       const response = await axios.post(
         "http://localhost:9000/createEvent",
         eventData
       );
-      console.log("Navigated2");
+
       setEvent(() => response.data);
 
       navigate(`/EventPage/${response.data.event_id}`);
-      console.log("Navigated");
+      console.log("responjse", response.data);
     } catch (error) {
       console.error(error);
     }
@@ -57,15 +56,27 @@ const useEvent = () => {
     }
   };
 
-  const joinEvent = async (event_id: string | undefined, user_id: any) => {
+  const joinEvent = async (event_id: any, user_id: any) => {
     try {
-      const response = await axios.put(
+      const response = await axios.post(
         `http://localhost:9000/joinEvent/${event_id}`,
         { user_id }
       );
       console.log(response.data);
     } catch (error) {
       console.error(error);
+    }
+  };
+
+  const getEventUsers = async (event_id: any) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:9000/eventUsers/${event_id}`
+      );
+
+      return response.data;
+    } catch (error: any) {
+      console.error(error.response.data.msg);
     }
   };
 
@@ -76,13 +87,21 @@ const useEvent = () => {
         user_id,
       });
 
+      console.log(response.data.msg);
+
       return response.data;
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      console.error(error.response.data.msg);
     }
   };
-
-  return { event, createEvent, getEventData, joinEvent, sendConRequest };
+  return {
+    event,
+    createEvent,
+    getEventData,
+    joinEvent,
+    sendConRequest,
+    getEventUsers,
+  };
 };
 
 export default useEvent;

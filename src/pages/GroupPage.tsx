@@ -28,7 +28,6 @@ const GroupPage = () => {
   const [groupPastEvents, setGroupPastEvents] = useState<EventType[]>([]);
   const [groupRequests, setGroupRequests] = useState<User[]>([]);
   const [groupMembers, setGroupMembers] = useState<User[]>([]);
-  const [joinStatus, setJoinStatus] = useState("None");
   const [isOwner, setIsOwner] = useState(false);
   const [groupData, setGroupData] = useState<Group | null>(null);
   const {
@@ -38,6 +37,7 @@ const GroupPage = () => {
     getGroupRequests,
     getGroupMembers,
     joinGroup,
+    leaveGroup,
   } = useGroup();
   const [popup, setPopup] = useState(false);
   const [membersPopup, setMembersPopUp] = useState(false);
@@ -62,12 +62,16 @@ const GroupPage = () => {
     navigate(`/CreateEvent/${id}`);
   };
 
+  const handleLeaveClick = () => {
+    leaveGroup(user?.ID, id);
+  };
   const handleSettingsClick = () => {
     navigate(`/GroupSettings/${id}`);
   };
 
   const handleJoinClick = (e: any) => {
     e.preventDefault();
+
     joinGroup(user?.ID, id);
   };
 
@@ -86,24 +90,24 @@ const GroupPage = () => {
     setMembersPopUp(!membersPopup);
   };
 
-  const navigateMembersClick = () => {
-    navigate(`/GroupMembers/${id}`);
-  };
-
   const checkIsOwner = () => {
     groupData?.owner_id === user?.ID ? setIsOwner(true) : setIsOwner(false);
   };
   popup
     ? document.body.classList.add("active-popup")
     : document.body.classList.remove("active-popup");
-
+  joinsPopup
+    ? document.body.classList.add("active-popup")
+    : document.body.classList.remove("active-popup");
+  membersPopup
+    ? document.body.classList.add("active-popup")
+    : document.body.classList.remove("active-popup");
   useEffect(() => {
     getGroup(id).then((res) => setGroupData(res));
     getGroupEvents(id).then((res) => setGroupEvents(res));
     getGroupMembers(id).then((res) => setGroupMembers(res));
     getGroupRequests(id).then((res) => setGroupRequests(res));
     getGroupPastEvents(id).then((res) => setGroupPastEvents(res));
-    console.log("hello", userGroup);
   }, []);
 
   useEffect(() => {
@@ -111,7 +115,6 @@ const GroupPage = () => {
       group.group_id === Number(id) && setUserGroup(group);
     });
     checkIsOwner();
-    console.log(isOwner);
   });
   return (
     <div>
@@ -208,9 +211,7 @@ const GroupPage = () => {
               {userGroup && !userGroup?.is_admin && !isOwner ? (
                 <OurButton
                   label={userGroup?.is_pending ? "Request Sent" : "Leave"}
-                  onClick={() => {
-                    setJoinStatus("Pending");
-                  }}
+                  onClick={handleLeaveClick}
                   variant="transparent"
                   thin
                   disabled={userGroup?.is_pending}
@@ -251,7 +252,7 @@ const GroupPage = () => {
                     label="Leave"
                     thin
                     variant="transparent"
-                    onClick={() => {}}
+                    onClick={handleLeaveClick}
                   />
                 </div>
               )}
@@ -305,10 +306,10 @@ const GroupPage = () => {
             </div>
           </div>
           {groupEvents.length !== 0 && (
-            <EventSlider event object={groupEvents} label="New Events" />
+            <EventSlider isEvent object={groupEvents} label="New Events" />
           )}
           {groupPastEvents && (
-            <EventSlider event object={groupPastEvents} label="Past Events" />
+            <EventSlider isEvent object={groupPastEvents} label="Past Events" />
           )}
           {groupEvents.length === 0 && !groupPastEvents && (
             <label>No Events found</label>
