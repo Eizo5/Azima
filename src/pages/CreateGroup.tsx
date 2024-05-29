@@ -16,6 +16,7 @@ import "../Styles/creategroup.css";
 import imgHolder from "../assets/EventImage.png";
 import useGroup from "../hooks/groupHook";
 import useAuthentication from "../hooks/userHook";
+import { eventType } from "../data/helpers";
 
 const CreateGroup = () => {
   const [publicId, setPublicId] = useState("");
@@ -52,10 +53,11 @@ const CreateGroup = () => {
   const [defaultCategories, setDefaultCategories] = useState<
     { value: string; label: string; category_id: number }[]
   >([]);
+  const [eventTypes, setEventTypes] = useState<
+    { value: string; label: string; id: number }[]
+  >([]);
 
   const { categories, createGroup } = useGroup();
-
-  const navigate = useNavigate();
 
   const handleCreateGroupClick = (e) => {
     e.preventDefault();
@@ -75,6 +77,14 @@ const CreateGroup = () => {
         category_id,
       }))
     );
+    const eventTypes = [];
+    if (groupData.is_f2f) {
+      eventTypes.push({ id: 1, value: "f2f", label: "f2f" });
+    }
+    if (groupData.is_online) {
+      eventTypes.push({ id: 2, value: "online", label: "online" });
+    }
+    setEventTypes(eventTypes);
   }, []);
 
   useEffect(() => {
@@ -112,21 +122,20 @@ const CreateGroup = () => {
             />
             <div className="dropdowns">
               <Dropdown
-                list={[
-                  { value: "online", label: "Online" },
-                  { value: "f2f", label: "f2f" },
-                ]}
-                onChange={(options: any) =>
+                list={eventType}
+                value={eventTypes}
+                onChange={(options) => {
                   setGroupData({
                     ...groupData,
                     is_f2f: options.some(
                       (option: any) => option.value === "f2f"
                     ),
                     is_online: options.some(
-                      (option) => option.value === "online"
+                      (option: any) => option.value === "online"
                     ),
-                  })
-                }
+                  });
+                  setEventTypes(options);
+                }}
                 multiSelect={true}
                 label="Events Type"
               />

@@ -7,7 +7,6 @@ import MyEvents from "../components/MyEvents";
 import AccountIconPurple from "../assets/AccountIconPurple.png";
 import MyGroups1 from "../assets/MyGroups.png";
 import MyEvents1 from "../assets/MyEvents.png";
-import SettingsSmall from "../assets/SettingsSmall.png";
 
 import "../Styles/settings.css";
 

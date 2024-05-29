@@ -113,7 +113,6 @@ const GroupPage = () => {
     });
     checkIsOwner();
   });
-  console.log("groupEvents", groupEvents);
 
   return (
     <div>
@@ -208,7 +207,7 @@ const GroupPage = () => {
             }}
           >
             <img
-              src={groupData?.group_image}
+              src={groupData?.group_image || "/group-default.jpg"}
               alt={groupData?.name}
               className="event-img"
             />
@@ -319,17 +318,22 @@ const GroupPage = () => {
               ))}
             </div>
           </div>
-          {groupEvents && groupEvents?.length !== 0 && (
-            <EventSlider isEvent object={groupEvents} label="New Events" />
-          )}
-          {groupPastEvents && (
-            <EventSlider isEvent object={groupPastEvents} label="Past Events" />
-          )}
-          {console.log("groupEvents", groupEvents)}
-          {(!groupEvents ||
-            (groupEvents?.length === 0 && !groupPastEvents)) && (
-            <label className="no-events-found">No Events found</label>
-          )}
+          <div className="events-container">
+            {groupEvents && groupEvents?.length !== 0 && (
+              <EventSlider isEvent object={groupEvents} label="New Events" />
+            )}
+            {groupPastEvents && (
+              <EventSlider
+                isEvent
+                object={groupPastEvents}
+                label="Past Events"
+              />
+            )}
+            {(!groupEvents ||
+              (groupEvents?.length === 0 && !groupPastEvents)) && (
+              <label className="no-events-found">No Events found</label>
+            )}
+          </div>
         </>
       )}
 

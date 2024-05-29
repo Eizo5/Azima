@@ -136,13 +136,17 @@ export default function () {
   const handleSubmitClick = () => {
     !isEmailValid && alert("Enter a valid Email");
     password !== confirmPassword &&
-      alert("the password you entered does not match");
+      alert("The passwords you entered do not match");
     !isPolicyChecked && alert("Please agree to our terms and polices");
-    password === confirmPassword &&
+    if (
+      password === confirmPassword &&
       isPasswordValid &&
       isEmailValid &&
-      isPolicyChecked &&
+      isPolicyChecked
+    ) {
       setStepTwo(true);
+      navigate("?step=2");
+    }
   };
 
   // Function to validate password

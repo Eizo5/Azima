@@ -11,6 +11,7 @@ import { Group } from "../data/types";
 import CloudinaryUploadWidget from "../components/UploadImage";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { eventType } from "../data/helpers";
 
 const Overview = () => {
   const { categories, updateGroup, getGroup } = useGroup();
@@ -35,6 +36,9 @@ const Overview = () => {
   });
   const [defaultCategories, setDefaultCategories] = useState<
     { value: string; label: string; category_id: number }[]
+  >([]);
+  const [eventTypes, setEventTypes] = useState<
+    { value: string; label: string; id: number }[]
   >([]);
 
   const [groupData, setGroupData] = useState({
@@ -72,6 +76,14 @@ const Overview = () => {
           category_id,
         }))
       );
+      const eventTypes = [];
+      if (res.is_f2f) {
+        eventTypes.push({ id: 1, value: "f2f", label: "f2f" });
+      }
+      if (res.is_online) {
+        eventTypes.push({ id: 2, value: "online", label: "online" });
+      }
+      setEventTypes(eventTypes);
     });
   }, []);
 
@@ -81,7 +93,6 @@ const Overview = () => {
       // Construct the Cloudinary image URL with the publicId
       const baseUrl = "https://res.cloudinary.com/dkgrr55re/image/upload/";
       const imageUrl = `${baseUrl}${publicId}`;
-
       // Update the image source in groupData
       setGroupData({ ...groupData, group_image: imageUrl });
     }
@@ -144,19 +155,18 @@ const Overview = () => {
           </div>
           <div className="dropdowns-overview">
             <Dropdown
-              list={[
-                { value: "online", label: "Online" },
-                { value: "f2f", label: "f2f" },
-              ]}
-              onChange={(options: any) =>
+              list={eventType}
+              value={eventTypes}
+              onChange={(options: any) => {
                 setGroupData({
                   ...groupData,
                   is_f2f: options.some((option: any) => option.value === "f2f"),
                   is_online: options.some(
                     (option) => option.value === "online"
                   ),
-                })
-              }
+                });
+                setEventTypes(options);
+              }}
               multiSelect={true}
               label="Events Type"
             />

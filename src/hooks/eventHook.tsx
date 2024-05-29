@@ -70,6 +70,20 @@ const useEvent = () => {
     }
   };
 
+  const leaveEvent = async (user_id: any, event_id: any) => {
+    try {
+      const response = await axios.post(`http://localhost:9000/leaveEvent`, {
+        user_id,
+        event_id,
+      });
+
+      console.log(response.data);
+      return response.data;
+    } catch (error: any) {
+      console.error(error.response.data.msg);
+    }
+  };
+
   const getEventUsers = async (event_id: any) => {
     try {
       const response = await axios.get(
@@ -148,6 +162,7 @@ const useEvent = () => {
     createEvent,
     getEventData,
     joinEvent,
+    leaveEvent,
     sendConRequest,
     getEventUsers,
     rateEvent,

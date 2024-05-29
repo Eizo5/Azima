@@ -16,13 +16,13 @@ import { Footer } from "../components/Footer";
 import "../Styles/eventpage.css";
 import Location from "../assets/Location.png";
 import Description from "../assets/Description.png";
-import Comedy from "../assets/Comedy.png";
-import Members from "../assets/Members.png";
-import _Date from "../assets/date.png";
+import Ticket from "../assets/Ticket.svg";
+import Members from "../assets/Neighbor.svg";
+import _Date from "../assets/date.svg";
 
 import "../Styles/groupPage.css";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { EventType, EventUser, RatingType } from "../data/types";
 import useEvent from "../hooks/eventHook";
@@ -33,12 +33,8 @@ import { formatDate } from "../data/helpers";
 import { InputDesc } from "../components/InputDesc";
 
 const EventPage = () => {
-  const [value, setValue] = useState<number | null>(2);
-
   const [eventData, setEventData] = useState<EventType | null>(null);
-  //const [eventUsers, setEventUsers] = useState<EventUser[] | null>(null);
   const [eventUser, setEventUser] = useState<EventUser | null>(null);
-  const [groupPastEvents, setGroupPastEvents] = useState<EventType[]>([]);
   const [ratings, setRatings] = useState<RatingType[] | null>(null);
 
   const [conPopup, setConPopup] = useState(false);
@@ -50,6 +46,7 @@ const EventPage = () => {
   const {
     getEventData,
     joinEvent,
+    leaveEvent,
     sendConRequest,
     rateEvent,
     getEventUsers,
@@ -65,12 +62,12 @@ const EventPage = () => {
       imgSrc: Description,
       info: eventData?.event_capacity + " Available tickets",
     },
-    { imgSrc: Comedy, info: "" },
-    { imgSrc: Members, info: "10 Members " },
+    { imgSrc: Members, info: eventData?.guests },
     {
       imgSrc: _Date,
       info: formatDate(eventData?.event_date) + " - " + eventData?.time,
     },
+    { imgSrc: Ticket, info: eventData?.ticket_price },
   ];
 
   const handleRateClick = (e: any) => {
@@ -80,8 +77,13 @@ const EventPage = () => {
   };
   const handleJoinClick = (e: any) => {
     e.preventDefault();
-
     !eventUser && joinEvent(id, user?.ID);
+    window.location.reload();
+  };
+  const handleLeaveClick = (e: any) => {
+    e.preventDefault();
+    leaveEvent(user?.ID, id);
+    window.location.reload();
   };
 
   const handleContributeReq = (e: any) => {
@@ -143,8 +145,6 @@ const EventPage = () => {
       });
     }
   }, [ratings]);
-
-  console.log(didUserRate, "didUserRate");
 
   return (
     <div>
@@ -231,7 +231,7 @@ const EventPage = () => {
         }}
       >
         <img
-          src={eventData?.event_image}
+          src={eventData?.event_image || "/event-default.jpg"}
           alt={eventData?.name}
           className="event-img"
         />
@@ -251,11 +251,10 @@ const EventPage = () => {
             {!eventUser?.is_con_pending && !isPast && (
               <>
                 <OurButton
-                  label={!eventUser ? "Join" : "Joined"}
-                  onClick={handleJoinClick}
+                  label={!eventUser ? "Join" : "Leave"}
+                  onClick={!eventUser ? handleJoinClick : handleLeaveClick}
                   variant="transparent"
                   thin
-                  disabled={eventUser}
                 />
 
                 {eventData?.is_contribution_allowed && eventUser && (
@@ -283,7 +282,7 @@ const EventPage = () => {
           {eventInfo.map(({ imgSrc, info }, index) => (
             <div key={index} className="info">
               <img src={imgSrc} alt="" />
-              <p>{info}</p>
+              <p>{info || " -"}</p>
             </div>
           ))}
         </div>
@@ -312,8 +311,7 @@ const EventPage = () => {
       </div>
       <div className="others">
         <p>
-          <span className="bold">Ticket Price:</span>{" "}
-          {eventData?.ticket_price + " " + eventData?.currency}
+          <span className="bold">Ticket Price:</span> {eventData?.ticket_price}
         </p>
         <p>
           <span className="bold">Included:</span>{" "}
@@ -332,7 +330,7 @@ const EventPage = () => {
           {eventData?.event_capacity}
         </p>
         <p>
-          <span className="bold">Return policy:</span>
+          <span className="bold">Return policy: </span>
           {eventData?.return_policy}
         </p>
         <p>

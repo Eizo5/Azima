@@ -243,10 +243,10 @@ const useAuthentication = (): {
       const response = await axios.post(`http://localhost:9000/userEvents`, {
         user_id,
       });
-      const result = { ...response.data };
+
       localStorage.setItem("userEvents", JSON.stringify(response.data));
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      console.error(error.response.data.msg);
     }
   };
 

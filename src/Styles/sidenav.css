@@ -3,7 +3,7 @@
   height: 100vh;
   background-color: #7a458f;
   position: fixed;
-  margin-top: 10rem;
+  margin-top: 12rem;
 }
 .sidebuttons {
   display: flex;
@@ -37,7 +37,7 @@
 .button-container {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 2rem;
   justify-content: start;
   margin-left: 3rem;
 }

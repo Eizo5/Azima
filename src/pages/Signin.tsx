@@ -55,14 +55,7 @@ export default function () {
             />
             <FaLock className="icon" />
           </div>
-          <div className="remember-forgot">
-            <label>
-              <input type="checkbox" />
-              Remember me
-            </label>
-            <label></label>
-            <a href="#">Forgot password?</a>
-          </div>
+
           <OurButton label={"Sign-in"} position="center" type="submit" />
           <div className="register-link">
             <p>

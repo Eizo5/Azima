@@ -102,6 +102,9 @@
   text-align: center;
   margin-top: 20px 0 15px;
 }
+.register-link {
+  margin-top: 2rem;
+}
 .register-link p Link{
   color: rgb(86, 17, 113);
   text-decoration: none;

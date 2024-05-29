@@ -1,5 +1,10 @@
 const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,25}$/;
 
+const eventType = [
+  { id: 1, value: "f2f", label: "f2f" },
+  { id: 2, value: "online", label: "online" },
+];
+
 const formatDate = (dateString: string | undefined) => {
   const date = new Date(dateString);
 
@@ -48,4 +53,4 @@ const formatDateTwo = (dateString: string | undefined) => {
   }
 };
 
-export { PASSWORD_REGEX, formatDate, formatDateTwo };
+export { PASSWORD_REGEX, eventType, formatDate, formatDateTwo };
