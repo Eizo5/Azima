@@ -37,7 +37,7 @@ const AccountSettings = ({}) => {
   };
 
   const handleSaveClick = (e: any) => {
-    console.log({ ...user, preferences });
+    ({ ...user, preferences });
     updateUser(user?.ID, { ...user, preferences });
   };
 

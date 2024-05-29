@@ -47,8 +47,11 @@ const CreateGroup = () => {
     is_online: false,
     is_f2f: false,
     owner_id: user?.ID || "",
-    categories: [1, 2],
+    categories: [],
   });
+  const [defaultCategories, setDefaultCategories] = useState<
+    { value: string; label: string; category_id: number }[]
+  >([]);
 
   const { categories, createGroup } = useGroup();
 
@@ -62,13 +65,18 @@ const CreateGroup = () => {
   const handleInputChange = (e: any) => {
     setGroupData({ ...groupData, [e.target.name]: e.target.value });
   };
-  console.log(groupData);
 
   useEffect(() => {
-    console.log(groupData);
-    console.log(user?.ID);
     setGroupData({ ...groupData, owner_id: user?.ID || "" });
+    setDefaultCategories(
+      groupData?.categories?.map(({ category_id, name }) => ({
+        value: name,
+        label: name,
+        category_id,
+      }))
+    );
   }, []);
+
   useEffect(() => {
     // Fetch the profile image URL using the publicId and update the image source
     if (publicId) {
@@ -126,12 +134,14 @@ const CreateGroup = () => {
                 list={categories}
                 label="Group Type"
                 multiSelect={true}
-                onChange={(option) =>
+                value={defaultCategories}
+                onChange={(option) => {
                   setGroupData({
                     ...groupData,
                     categories: option.map(({ category_id }) => category_id),
-                  })
-                }
+                  });
+                  setDefaultCategories(option);
+                }}
               />
             </div>
             <InputDesc

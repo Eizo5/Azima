@@ -42,7 +42,7 @@ interface EventUser {
   profile_image: string;
   username: string;
   is_con_pending: boolean;
-  is_contributor: boolean;
+  is_contributer: boolean;
 }
 
 interface UserSignUp {
@@ -151,8 +151,37 @@ interface AutResponse {
   groups: Group[];
 }
 
+interface UserProfiles {
+  user: User;
+  preferences: number[];
+}
+interface RatingType {
+  rate_id: number;
+  rate_date: string;
+  star: number;
+  comment: string;
+  event_id: number;
+  user_id: number;
+  ID: number;
+  email: string;
+  name: string;
+  surname: string;
+  password: string;
+  birthdate: string;
+  is_email_notifications_on: boolean;
+  is_email_private: boolean;
+  is_name_private: boolean;
+  is_sms_notifications_on: boolean;
+  is_theme_dark: boolean;
+  is_updates_notifications_on: boolean;
+  language: string | null;
+  profile_image: string;
+  username: string;
+}
+
 export type {
   User,
+  UserProfiles,
   EventUser,
   UserSignUp,
   UserEvents,
@@ -162,4 +191,5 @@ export type {
   UserGroup,
   AutResponse,
   Notification,
+  RatingType,
 };

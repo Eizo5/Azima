@@ -47,9 +47,8 @@ export default function HomePage() {
   // Get groups
   useEffect(() => {
     randomGroups();
-    console.log("userEvents", userEvents);
   }, []);
-  console.log(userGroups, preferredGroups, events, groupsData);
+
   return (
     <div>
       <NavBar navType="Navbar" />

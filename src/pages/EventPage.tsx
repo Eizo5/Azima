@@ -1,55 +1,86 @@
+import "swiper/css";
+import "swiper/swiper-bundle.css";
+
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation } from "swiper/modules";
+
+import Box from "@mui/material/Box";
+import Rating from "@mui/material/Rating";
+import Typography from "@mui/material/Typography";
+
+import RatingSlide from "../components/RatingSlide";
 import NavBar from "../components/navbar";
 import OurButton from "../components/OurButton";
 import { Footer } from "../components/Footer";
 
 import "../Styles/eventpage.css";
-
 import Location from "../assets/Location.png";
 import Description from "../assets/Description.png";
 import Comedy from "../assets/Comedy.png";
 import Members from "../assets/Members.png";
-import Date from "../assets/date.png";
+import _Date from "../assets/date.png";
 
 import "../Styles/groupPage.css";
-import { useEffect, useState } from "react";
+
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { EventType, EventUser } from "../data/types";
+import { EventType, EventUser, RatingType } from "../data/types";
 import useEvent from "../hooks/eventHook";
 
 import useAuthentication from "../hooks/userHook";
 
 import { formatDate } from "../data/helpers";
+import { InputDesc } from "../components/InputDesc";
+
 const EventPage = () => {
+  const [value, setValue] = useState<number | null>(2);
+
   const [eventData, setEventData] = useState<EventType | null>(null);
   //const [eventUsers, setEventUsers] = useState<EventUser[] | null>(null);
   const [eventUser, setEventUser] = useState<EventUser | null>(null);
   const [groupPastEvents, setGroupPastEvents] = useState<EventType[]>([]);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [ratings, setRatings] = useState<RatingType[] | null>(null);
+
   const [conPopup, setConPopup] = useState(false);
-  const [isFull, setIsFull] = useState(false);
+  const [ratePopup, setRatePopup] = useState(false);
+
+  const [didUserRate, setDidUserRate] = useState(false);
+  const [isPast, setIsPast] = useState(false);
   const { id } = useParams();
-  const { getEventData, joinEvent, sendConRequest, getEventUsers } = useEvent();
+  const {
+    getEventData,
+    joinEvent,
+    sendConRequest,
+    rateEvent,
+    getEventUsers,
+    getEventRatings,
+  } = useEvent();
   const { user } = useAuthentication();
+  const [star, setStar] = useState(0);
+  const [comment, setComment] = useState("");
 
   const eventInfo = [
     { imgSrc: Location, info: eventData?.location },
     {
       imgSrc: Description,
-      info: "Peaceful Life is a group where you can find people who loves having a quiet and fulling life, where you can do yoga, Meditation, Park picnics and more!! Join us now.",
+      info: eventData?.event_capacity + " Available tickets",
     },
-    { imgSrc: Comedy, info: "Entertainment " },
+    { imgSrc: Comedy, info: "" },
     { imgSrc: Members, info: "10 Members " },
     {
-      imgSrc: Date,
+      imgSrc: _Date,
       info: formatDate(eventData?.event_date) + " - " + eventData?.time,
     },
   ];
 
+  const handleRateClick = (e: any) => {
+    e.preventDefault();
+    rateEvent(star, comment, id, user?.ID);
+    window.location.reload();
+  };
   const handleJoinClick = (e: any) => {
     e.preventDefault();
-    /*     console.log("eventData?.event_capacity", eventData?.event_capacity);
-    console.log("id", id);
-    console.log("user?.ID", user?.ID); */
+
     !eventUser && joinEvent(id, user?.ID);
   };
 
@@ -62,17 +93,36 @@ const EventPage = () => {
     setConPopup(!conPopup);
   };
 
+  const toggleRatePopUp = () => {
+    setRatePopup(!ratePopup);
+  };
+
   conPopup
     ? document.body.classList.add("active-popup")
     : document.body.classList.remove("active-popup");
 
+  function isDateInPast(date) {
+    const inputDate = new Date(date); // Convert the input to a Date object
+
+    const currentDate = new Date(); // Get the current date and time
+
+    // Compare the input date with the current date
+    return inputDate < currentDate;
+  }
+
   useEffect(() => {
-    getEventData(id).then((res) => setEventData(res));
-    if (!eventData?.event_capacity || eventData?.event_capacity <= 0) {
-      // Handle the case where event_capacity is undefined or less than or equal to 0
-      setIsFull(true);
-    }
-  }, []);
+    const fetchData = async () => {
+      const data = await getEventData(id);
+      setEventData(data);
+      const ratings = await getEventRatings(id);
+      setRatings(ratings);
+      if (data?.event_date && isDateInPast(data.event_date)) {
+        setIsPast(true);
+      }
+    };
+
+    fetchData();
+  }, [id]);
 
   useEffect(() => {
     getEventUsers(id).then((res) => {
@@ -83,6 +133,18 @@ const EventPage = () => {
       });
     });
   }, [user]);
+
+  useEffect(() => {
+    if (ratings) {
+      ratings.map((rating) => {
+        if (rating.user_id === user?.ID) {
+          setDidUserRate(true);
+        }
+      });
+    }
+  }, [ratings]);
+
+  console.log(didUserRate, "didUserRate");
 
   return (
     <div>
@@ -109,45 +171,113 @@ const EventPage = () => {
           </div>
         </div>
       )}
+      {ratePopup && (
+        <div className="popup">
+          <div className="overlay">
+            <div className="popup-content">
+              <Box
+                sx={{
+                  "& > legend": {
+                    mt: 2,
+                    fontSize: "2.7rem",
+                    marginLeft: "13.5rem",
+                    width: "20rem",
+                  },
+
+                  "& .MuiRating-icon": {
+                    fontSize: "4rem",
+                    marginLeft: "4rem",
+                  },
+                }}
+              >
+                <Typography component="legend">Rate the event</Typography>
+                <Rating
+                  size="large"
+                  name="simple-controlled"
+                  value={star}
+                  onChange={(event, newValue) => {
+                    setStar(newValue || 0);
+                  }}
+                />
+              </Box>
+              <div className="rating-comment">
+                <InputDesc
+                  isTextArea
+                  placeholder={"Leave a comment"}
+                  onChange={(e) => setComment(e.target.value)}
+                  value={comment}
+                />
+
+                <OurButton
+                  label="Rate"
+                  position="center"
+                  thin
+                  onClick={handleRateClick}
+                />
+              </div>
+
+              <button className="close-popup" onClick={toggleRatePopUp}>
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <NavBar navType="fnav" />
       <div
         className="img-container"
         style={{
-          backgroundImage: `url("${eventData?.event_image}")`,
+          position: "relative",
         }}
       >
-        <div className="top-part">
+        <img
+          src={eventData?.event_image}
+          alt={eventData?.name}
+          className="event-img"
+        />
+        <div className="top-part1">
           <h1>{eventData?.name}</h1>
-          {!isAdmin && (
-            <div className="admin-buttons">
+
+          <div className="admin-buttons">
+            {isPast && (
               <OurButton
-                label={!eventUser ? "Join" : "Joined"}
-                onClick={handleJoinClick}
+                label={didUserRate ? "Rating Submited" : "Rate Event"}
+                onClick={toggleRatePopUp}
                 variant="transparent"
                 thin
-                disabled={eventUser}
+                disabled={didUserRate}
               />
-
-              {eventData?.is_contribution_allowed && eventUser && (
+            )}
+            {!eventUser?.is_con_pending && !isPast && (
+              <>
                 <OurButton
-                  label={
-                    eventUser?.is_con_pending ? "Request sent" : "Contribute"
-                  }
-                  thin
+                  label={!eventUser ? "Join" : "Joined"}
+                  onClick={handleJoinClick}
                   variant="transparent"
-                  onClick={toggleConPopUp}
-                  disabled={
-                    eventUser?.is_con_pending || eventUser?.is_contributor
-                  }
+                  thin
+                  disabled={eventUser}
                 />
-              )}
-            </div>
-          )}
-          {isAdmin && (
-            <div className="admin-buttons">
-              <OurButton label="Join" thin variant="transparent" />
-            </div>
-          )}
+
+                {eventData?.is_contribution_allowed && eventUser && (
+                  <OurButton
+                    label={
+                      eventUser?.is_con_pending
+                        ? "Request sent"
+                        : eventUser?.is_contributer
+                        ? "Contributer"
+                        : "Contribute"
+                    }
+                    thin
+                    variant="transparent"
+                    onClick={toggleConPopUp}
+                    disabled={
+                      eventUser?.is_con_pending || eventUser?.is_contributer
+                    }
+                  />
+                )}
+              </>
+            )}
+          </div>
         </div>
         <div className="info-container">
           {eventInfo.map(({ imgSrc, info }, index) => (
@@ -209,6 +339,21 @@ const EventPage = () => {
           <span className="bold">Guests:</span> {eventData?.guests}
         </p>
       </div>
+
+      <Swiper
+        modules={[Navigation]}
+        spaceBetween={0}
+        slidesPerView={4}
+        navigation
+        onSlideChange={() => console.log("slide change")}
+        onSwiper={(swiper) => console.log(swiper)}
+      >
+        {ratings?.map((group) => (
+          <SwiperSlide>
+            <RatingSlide rating={group} />
+          </SwiperSlide>
+        ))}
+      </Swiper>
       <Footer />
     </div>
   );

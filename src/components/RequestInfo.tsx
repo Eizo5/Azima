@@ -11,7 +11,6 @@ const RequestInfo = ({ username, imgUrl, memberId }) => {
   const removeAdminClick = (e: any) => {
     e.preventDefault();
     removeAdmin(memberId, id);
-    console.log(id);
   };
 
   return (

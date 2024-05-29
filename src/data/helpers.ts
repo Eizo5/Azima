@@ -27,4 +27,25 @@ const formatDate = (dateString: string | undefined) => {
   return formattedDate.replace(day, dayWithSuffix);
 };
 
-export { PASSWORD_REGEX, formatDate };
+const formatDateTwo = (dateString: string | undefined) => {
+  const date = new Date(dateString);
+  const now = new Date();
+
+  const diffInMilliseconds = now.getTime() - date.getTime();
+  const diffInSeconds = Math.floor(diffInMilliseconds / 1000);
+  const diffInMinutes = Math.floor(diffInSeconds / 60);
+  const diffInHours = Math.floor(diffInMinutes / 60);
+  const diffInDays = Math.floor(diffInHours / 24);
+
+  if (diffInSeconds < 60) {
+    return `${diffInSeconds} seconds ago`;
+  } else if (diffInMinutes < 60) {
+    return `${diffInMinutes} minutes ago`;
+  } else if (diffInHours < 24) {
+    return `${diffInHours} hours ago`;
+  } else {
+    return `${diffInDays} days ago`;
+  }
+};
+
+export { PASSWORD_REGEX, formatDate, formatDateTwo };

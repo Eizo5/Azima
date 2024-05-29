@@ -82,7 +82,7 @@ const useGroup = () => {
       const response = await axios.get(
         `http://localhost:9000/getGroupEvents/${group_id}`
       );
-      console.log(response.data);
+
       return response.data;
     } catch (error) {
       console.error(error);
@@ -94,6 +94,7 @@ const useGroup = () => {
       const response = await axios.get(
         `http://localhost:9000/getPastEvents/${group_id}`
       );
+
       return response.data;
     } catch (error) {
       console.error(error);
@@ -198,7 +199,7 @@ const useGroup = () => {
         group_id,
       });
 
-      console.log(response.data.msg);
+      return response.data;
     } catch (error: any) {
       console.error(error.response.data.msg);
     }
@@ -211,7 +212,7 @@ const useGroup = () => {
         group_id,
       });
 
-      console.log(response.data.msg);
+      return response.data;
     } catch (error: any) {
       console.error(error.response.data.msg);
     }

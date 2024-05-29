@@ -4,6 +4,7 @@ import Test from "../assets/Eid.png";
 import useAuthentication from "../hooks/userHook";
 const MyEvents = () => {
   const { userEvents } = useAuthentication();
+
   return (
     <div>
       <OurButton position="right" label="Create Group" />
@@ -13,7 +14,8 @@ const MyEvents = () => {
           <Event
             label={event.name}
             imageUrl={event.event_image}
-            id={event.ID}
+            id={event.ID || event.event_id}
+            isEvent
           />
         ))}
         <Event label="Test" imageUrl={Test} />

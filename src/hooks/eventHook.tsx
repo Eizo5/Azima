@@ -38,7 +38,6 @@ const useEvent = () => {
       setEvent(() => response.data);
 
       navigate(`/EventPage/${response.data.event_id}`);
-      console.log("responjse", response.data);
     } catch (error) {
       console.error(error);
     }
@@ -62,7 +61,10 @@ const useEvent = () => {
         `http://localhost:9000/joinEvent/${event_id}`,
         { user_id }
       );
+
       console.log(response.data);
+
+      return response.data;
     } catch (error) {
       console.error(error);
     }
@@ -87,13 +89,60 @@ const useEvent = () => {
         user_id,
       });
 
-      console.log(response.data.msg);
+      return response.data;
+    } catch (error: any) {
+      console.error(error.response.data.msg);
+    }
+  };
+
+  const rateEvent = async (
+    star: number,
+    comment: string,
+    event_id: any,
+    user_id: any
+  ) => {
+    try {
+      const response = await axios.post(`http://localhost:9000/rateEvent`, {
+        star,
+        comment,
+        event_id,
+        user_id,
+      });
+
+      console.log(response.data);
+      return response.data;
+    } catch (error: any) {
+      console.error(error.response.data.msg);
+    }
+  };
+
+  const getEventRatings = async (event_id: any) => {
+    try {
+      const response = await axios.post(
+        `http://localhost:9000/getEventRatings`,
+        {
+          event_id,
+        }
+      );
+      console.log(response.data);
+      return response.data;
+    } catch (error: any) {
+      console.error(error.response.data.msg);
+    }
+  };
+
+  const deleteRating = async (rate_id: any) => {
+    try {
+      const response = await axios.post(`http://localhost:9000/deleteRating`, {
+        rate_id,
+      });
 
       return response.data;
     } catch (error: any) {
       console.error(error.response.data.msg);
     }
   };
+
   return {
     event,
     createEvent,
@@ -101,6 +150,9 @@ const useEvent = () => {
     joinEvent,
     sendConRequest,
     getEventUsers,
+    rateEvent,
+    getEventRatings,
+    deleteRating,
   };
 };
 

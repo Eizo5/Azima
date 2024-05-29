@@ -3,7 +3,13 @@ import Select, { StylesConfig } from "react-select";
 
 import "../Styles/dropdown.css";
 
-const Dropdown = ({ label, list, multiSelect = false, onChange, value }) => {
+const Dropdown = ({
+  label,
+  list,
+  multiSelect = false,
+  onChange,
+  value = [],
+}) => {
   /*   const [selectedOption, setSelectedOption] = useState(
     list ? list[0].name : ""
   );
@@ -32,7 +38,7 @@ const Dropdown = ({ label, list, multiSelect = false, onChange, value }) => {
       <Select
         className="dropdown"
         id="dropdown"
-        value={value && value?.length > 0 ? value.map((val) => val) : list[0]}
+        value={value && value?.length > 0 ? value.map((val) => val) : []}
         name={label}
         options={list}
         isMulti={multiSelect}

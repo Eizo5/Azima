@@ -15,10 +15,18 @@ import GroupImage from "../assets/groupimg.png";
 import "../Styles/groupPage.css";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { EventType, EventUser, UserGroup, Group, User } from "../data/types";
+import {
+  EventType,
+  EventUser,
+  UserGroup,
+  Group,
+  User,
+  UserProfiles,
+} from "../data/types";
 import useEvent from "../hooks/eventHook";
 
 import useAuthentication from "../hooks/userHook";
+import { formatDate } from "../data/helpers";
 
 const UserProfile = () => {
   const [eventData, setEventData] = useState<EventType | null>(null);
@@ -51,7 +59,7 @@ const UserProfile = () => {
       imgSrc: Description,
       info: userData?.email,
     },
-    { imgSrc: Comedy, info: userData?.birthdate },
+    { imgSrc: Comedy, info: formatDate(userData?.birthdate) },
     { imgSrc: Members, info: userGroups?.length + " Groups " },
   ];
 
@@ -85,7 +93,6 @@ const UserProfile = () => {
     getUserGroupsDiff(id).then((res) => setUserGroups(res));
     getUserOwnerGroupsDiff(id).then((res) => setUserOwnerGroups(res));
     getUserAdminGroupsDiff(id).then((res) => setUserAdminGroups(res));
-    console.log("userGroups", userGroups, userOwnerGroups, userAdminGroups);
   }, []);
   useEffect(() => {
     eventUsers?.map((eventUser) => {
@@ -94,14 +101,13 @@ const UserProfile = () => {
         setEventUser(eventUser);
       }
     });
-    console.log("trie or", eventUser);
-    console.log("trie or", eventUser?.is_contributor);
+
     getUser(id).then((res) => {
       setUserData(res);
-      console.log("userData", userData);
     });
   }, []);
 
+  console.log("user", userData);
   return (
     <div>
       <NavBar navType="fnav" />

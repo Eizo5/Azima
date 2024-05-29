@@ -153,7 +153,6 @@ export default function () {
     e.preventDefault();
 
     if (isPasswordValid) {
-      console.log("Form submitted");
     }
   };
 

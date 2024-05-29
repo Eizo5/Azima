@@ -1,10 +1,7 @@
 .img-container {
   margin-top: 11.8rem;
   padding: 3rem 5rem;
-  height: 55rem;
-  background-repeat: no-repeat;
-  background-size: cover;
-  backdrop-filter: brightness(0.3);
+  height: 45rem;
   color: white;
 }
 
@@ -24,6 +21,12 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 5rem;
+}
+.top-part1 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
 }
 
 .top-part h1 {
@@ -64,4 +67,23 @@
   height: 30rem;
   border-radius: 100rem;
   object-fit: cover;
+}
+
+.event-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: blur(5px) brightness(0.5);
+  z-index: -1;
+}
+
+.no-events-found {
+  font-size: 4rem;
+  color: rgb(86, 17, 113);
+  text-align: center;
+  width: 100%;
+  padding: 4rem;
 }

@@ -58,6 +58,7 @@ const Overview = () => {
 
     updateGroup(groupData);
   };
+
   useEffect(() => {
     getGroup(id).then((res) => {
       setGroupData({

@@ -17,8 +17,6 @@ import useGroup from "../hooks/groupHook";
 import { Group, EventType, User, UserGroup } from "../data/types";
 import RequestInfo from "../components/RequestInfo";
 
-import { Link } from "react-router-dom";
-import { color } from "@cloudinary/url-gen/qualifiers/background";
 import MemberInfo from "../components/MemberInfo";
 import useAuthentication from "../hooks/userHook";
 
@@ -54,7 +52,7 @@ const GroupPage = () => {
       info: groupData?.description,
     },
     { imgSrc: Comedy, info: groupData?.categories },
-    { imgSrc: Members, info: groupMembers.length + " Members " },
+    { imgSrc: Members, info: groupMembers?.length + " Members " },
   ];
 
   const navigate = useNavigate();
@@ -83,7 +81,6 @@ const GroupPage = () => {
   const toggleJoinPopup = (e: any) => {
     e.preventDefault();
     setjoinPopUp(!joinsPopup);
-    console.log(joinsPopup);
   };
 
   const toggleMemberPop = (e: any) => {
@@ -116,6 +113,8 @@ const GroupPage = () => {
     });
     checkIsOwner();
   });
+  console.log("groupEvents", groupEvents);
+
   return (
     <div>
       <NavBar navType="fnav" />
@@ -130,19 +129,22 @@ const GroupPage = () => {
         </div>
       ) : (
         <>
-          {" "}
           {popup && (
             <div className="popup">
               <div className="overlay">
                 <div className="popup-content">
                   <h3>Requests: </h3>
-                  {groupRequests.map((user) => (
-                    <RequestInfo
-                      username={user.username}
-                      imgUrl={user.profile_image}
-                      memberId={user.ID}
-                    />
-                  ))}
+                  {groupRequests ? (
+                    groupRequests.map((user) => (
+                      <RequestInfo
+                        username={user.username}
+                        imgUrl={user.profile_image}
+                        memberId={user.ID}
+                      />
+                    ))
+                  ) : (
+                    <p>No requests found</p>
+                  )}
 
                   <button className="close-popup" onClick={togglePopup}>
                     Close
@@ -202,9 +204,14 @@ const GroupPage = () => {
           <div
             className="img-container"
             style={{
-              backgroundImage: `url("${groupData?.group_image}")`,
+              position: "relative",
             }}
           >
+            <img
+              src={groupData?.group_image}
+              alt={groupData?.name}
+              className="event-img"
+            />
             <div className="top-part">
               <h1>{groupData?.name}</h1>
 
@@ -286,16 +293,23 @@ const GroupPage = () => {
                   {index === 3 ? (
                     <p
                       className="member-hover"
-                      onClick={toggleMemberPop}
-                      style={{ color: "white", textDecoration: "underline" }}
+                      onClick={(e) =>
+                        !info?.includes("0 Members") && toggleMemberPop(e)
+                      }
+                      style={{
+                        color: `${!info?.includes("0 Members") && "white"}`,
+                        textDecoration: `${
+                          !info?.includes("0 Members") && "underline"
+                        }`,
+                      }}
                     >
                       {info || "-"}
                     </p>
-                  ) : Array.isArray(info) && info.length > 0 ? (
+                  ) : Array.isArray(info) && info?.length > 0 ? (
                     info.map(({ category_id, name }) => (
                       <p key={category_id} style={{ width: "auto" }}>
                         {name}
-                        {category_id !== info.length && ", "}
+                        {category_id !== info?.length && ", "}
                       </p>
                     ))
                   ) : (
@@ -305,14 +319,16 @@ const GroupPage = () => {
               ))}
             </div>
           </div>
-          {groupEvents.length !== 0 && (
+          {groupEvents && groupEvents?.length !== 0 && (
             <EventSlider isEvent object={groupEvents} label="New Events" />
           )}
           {groupPastEvents && (
             <EventSlider isEvent object={groupPastEvents} label="Past Events" />
           )}
-          {groupEvents.length === 0 && !groupPastEvents && (
-            <label>No Events found</label>
+          {console.log("groupEvents", groupEvents)}
+          {(!groupEvents ||
+            (groupEvents?.length === 0 && !groupPastEvents)) && (
+            <label className="no-events-found">No Events found</label>
           )}
         </>
       )}

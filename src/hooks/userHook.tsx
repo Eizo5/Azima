@@ -13,7 +13,6 @@ import {
   UserEvents,
   Notification,
 } from "../data/types";
-import { set } from "@cloudinary/url-gen/actions/variable";
 
 const useAuthentication = (): {
   user: User | null;
@@ -72,7 +71,6 @@ const useAuthentication = (): {
     if (storedUserEvents) {
       setUserEvents(() => storedUserEvents && JSON.parse(storedUserEvents));
     }
-    console.log("userEventshook", userEvents);
   }, []);
 
   useEffect(() => {
@@ -81,7 +79,6 @@ const useAuthentication = (): {
     user && getUserAdminGroups(user?.ID);
     user && getUserEvents(user?.ID);
     user && getUserNot(user?.ID);
-    console.log("notssss", notifications);
   }, [user]);
 
   const register = async (
@@ -255,12 +252,11 @@ const useAuthentication = (): {
 
   const getUser = async (user_id: string | undefined) => {
     try {
-      const response = await axios.post(
-        `http://localhost:9000/userData/${user_id}`,
-        {}
-      );
-      const user = { ...response.data };
-      console.log("userrrr", user);
+      const response = await axios.post(`http://localhost:9000/userData`, {
+        user_id,
+      });
+      const user = response.data;
+
       return user;
     } catch (error) {
       console.error(error);
@@ -274,10 +270,6 @@ const useAuthentication = (): {
       });
 
       setNotifications(() => response.data);
-
-      /*    const user = { ...response.data };
-      console.log("userrrr", user);
-      return user; */
     } catch (error) {
       console.error(error);
     }
