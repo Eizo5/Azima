@@ -109,10 +109,23 @@
   padding-left: 6rem;
   padding-top: 4rem;
 }
+.member-container-no-buttons {
+  display: flex;
+  width: 20rem;
+  gap: 9rem;
+  padding-left: 6rem;
+  padding-top: 4rem;
+}
+
+.image-name-container-member-no-buttons {
+  display: flex;
+  gap: 2rem;
+}
 
 .member-container-group {
   display: flex;
-  width: 100rem;
+  width: 75rem;
+  justify-content: space-between;
   gap: 9rem;
   padding-left: 2rem;
   padding-top: 4rem;

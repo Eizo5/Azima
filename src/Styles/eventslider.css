@@ -25,3 +25,48 @@
 .event-slider {
   width: 100%;
 }
+.image-container-hover:hover .event-image {
+  filter: grayscale(200%) blur(5px);
+}
+
+.overlay-hover {
+  height: 100%;
+  width: 100%;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-container-hover:hover .overlay-hover {
+  opacity: 1;
+}
+
+.hovered-items {
+  position: absolute;
+  right: 27rem;
+  bottom: 15rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+.hovered-texts {
+  position: absolute;
+  right: 17rem;
+  bottom: 15rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.4rem;
+  font-weight: 700;
+  color: #ffedff;
+}
+
+.hovered-items img {
+  width: 3.5rem;
+}

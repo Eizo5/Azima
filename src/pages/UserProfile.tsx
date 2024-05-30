@@ -86,18 +86,22 @@ const UserProfile = () => {
           label={userData?.username + " Groups: " + userGroups?.length}
           object={userGroups}
         />
-        <EventSlider
-          label={
-            userData?.username + " Owned Groups: " + userOwnerGroups?.length
-          }
-          object={userOwnerGroups}
-        />
-        <EventSlider
-          label={
-            userData?.username + " Admin Groups: " + userAdminGroups?.length
-          }
-          object={userAdminGroups}
-        />
+        {userOwnerGroups && (
+          <EventSlider
+            label={
+              userData?.username + " Owned Groups: " + userOwnerGroups?.length
+            }
+            object={userOwnerGroups}
+          />
+        )}
+        {userAdminGroups && (
+          <EventSlider
+            label={
+              userData?.username + " Admin Groups: " + userAdminGroups?.length
+            }
+            object={userAdminGroups}
+          />
+        )}
       </div>
 
       <Footer />

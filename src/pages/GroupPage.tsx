@@ -2,6 +2,8 @@ import NavBar from "../components/navbar";
 import OurButton from "../components/OurButton";
 import { EventSlider } from "../components/EventSlider";
 import { Footer } from "../components/Footer";
+import MemberInfo from "../components/MemberInfo";
+import ReqInfo from "../components/ReqInfo";
 
 import Location from "../assets/Location.png";
 import Description from "../assets/Description.png";
@@ -10,15 +12,15 @@ import Members from "../assets/Members.png";
 
 import "../Styles/popup.css";
 import "../Styles/groupPage.css";
+
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import useGroup from "../hooks/groupHook";
+import useAuthentication from "../hooks/userHook";
 
 import { Group, EventType, User, UserGroup } from "../data/types";
-import RequestInfo from "../components/RequestInfo";
 
-import MemberInfo from "../components/MemberInfo";
-import useAuthentication from "../hooks/userHook";
+import RequestInfo from "../components/RequestInfo";
 
 // joinStatus === "None"|"Pending"|"Member"
 const GroupPage = () => {
@@ -27,6 +29,7 @@ const GroupPage = () => {
   const [groupRequests, setGroupRequests] = useState<User[]>([]);
   const [groupMembers, setGroupMembers] = useState<User[]>([]);
   const [isOwner, setIsOwner] = useState(false);
+  const [isPending, setIsPending] = useState(false);
   const [groupData, setGroupData] = useState<Group | null>(null);
   const {
     getGroup,
@@ -44,7 +47,6 @@ const GroupPage = () => {
   const { userGroups, user } = useAuthentication();
 
   const { id } = useParams();
-
   const eventInfo = [
     { imgSrc: Location, info: groupData?.location },
     {
@@ -62,6 +64,7 @@ const GroupPage = () => {
 
   const handleLeaveClick = () => {
     leaveGroup(user?.ID, id);
+    window.location.reload();
   };
   const handleSettingsClick = () => {
     navigate(`/GroupSettings/${id}`);
@@ -69,8 +72,8 @@ const GroupPage = () => {
 
   const handleJoinClick = (e: any) => {
     e.preventDefault();
-
     joinGroup(user?.ID, id);
+    window.location.reload();
   };
 
   const togglePopup = (e: any) => {
@@ -105,6 +108,8 @@ const GroupPage = () => {
     getGroupMembers(id).then((res) => setGroupMembers(res));
     getGroupRequests(id).then((res) => setGroupRequests(res));
     getGroupPastEvents(id).then((res) => setGroupPastEvents(res));
+    userGroup?.is_pending && setIsPending(true);
+    console.log(isPending, "isPending", userGroup?.is_pending);
   }, []);
 
   useEffect(() => {
@@ -185,9 +190,9 @@ const GroupPage = () => {
             <div className="popup">
               <div className="overlay">
                 <div className="popup-content">
-                  <h3>Requests: </h3>
+                  <h3>Members: </h3>
                   {groupMembers.map((user) => (
-                    <MemberInfo
+                    <ReqInfo
                       username={user.username}
                       imgUrl={user.profile_image}
                       memberId={user.ID}
@@ -235,12 +240,14 @@ const GroupPage = () => {
               )}
               {userGroup?.is_admin && !isOwner && (
                 <div className="admin-buttons">
-                  <OurButton
-                    label="Requests"
-                    thin
-                    variant="transparent"
-                    onClick={togglePopup}
-                  />
+                  {groupData?.is_private_group && (
+                    <OurButton
+                      label="Requests"
+                      thin
+                      variant="transparent"
+                      onClick={togglePopup}
+                    />
+                  )}
                   <OurButton
                     label="Add Event"
                     thin
@@ -264,12 +271,14 @@ const GroupPage = () => {
               )}
               {isOwner && (
                 <div className="admin-buttons">
-                  <OurButton
-                    label="Requests"
-                    thin
-                    variant="transparent"
-                    onClick={togglePopup}
-                  />
+                  {groupData?.is_private_group && (
+                    <OurButton
+                      label="Requests"
+                      thin
+                      variant="transparent"
+                      onClick={togglePopup}
+                    />
+                  )}
                   <OurButton
                     label="Add Event"
                     thin
@@ -318,22 +327,31 @@ const GroupPage = () => {
               ))}
             </div>
           </div>
-          <div className="events-container">
-            {groupEvents && groupEvents?.length !== 0 && (
-              <EventSlider isEvent object={groupEvents} label="New Events" />
-            )}
-            {groupPastEvents && (
-              <EventSlider
-                isEvent
-                object={groupPastEvents}
-                label="Past Events"
-              />
-            )}
-            {(!groupEvents ||
-              (groupEvents?.length === 0 && !groupPastEvents)) && (
-              <label className="no-events-found">No Events found</label>
-            )}
-          </div>
+          {(!userGroup || isPending) &&
+          !isOwner &&
+          groupData?.is_private_group ? (
+            <>
+              <label className="no-events-found">Private Group</label>
+              <label className="join-to-see">Join to see the events</label>
+            </>
+          ) : (
+            <div className="events-container">
+              {groupEvents && groupEvents?.length !== 0 && (
+                <EventSlider isEvent object={groupEvents} label="New Events" />
+              )}
+              {groupPastEvents && (
+                <EventSlider
+                  isEvent
+                  object={groupPastEvents}
+                  label="Past Events"
+                />
+              )}
+              {(!groupEvents ||
+                (groupEvents?.length === 0 && !groupPastEvents)) && (
+                <label className="no-events-found">No Events found</label>
+              )}
+            </div>
+          )}
         </>
       )}
 

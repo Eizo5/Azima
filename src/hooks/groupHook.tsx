@@ -218,6 +218,24 @@ const useGroup = () => {
     }
   };
 
+  const joinGroupResponse = async (
+    group_id: any,
+    user_id: any,
+    status: string
+  ) => {
+    try {
+      const response = await axios.put(`http://localhost:9000/joinGroupRes`, {
+        group_id,
+        user_id,
+        status,
+      });
+      console.log(response.data);
+      return response.data;
+    } catch (error: any) {
+      console.error(error.response.data.msg);
+    }
+  };
+
   return {
     group,
     categories,
@@ -236,7 +254,7 @@ const useGroup = () => {
     getCategories,
     removeAdmin,
     leaveGroup,
-
+    joinGroupResponse,
     updateGroup,
   };
 };

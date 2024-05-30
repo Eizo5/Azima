@@ -127,6 +127,14 @@
   width: 100%;
   padding: 4rem;
 }
+.join-to-see {
+  font-size: 2rem;
+  color: rgb(86, 17, 113);
+  text-align: center;
+  width: 100%;
+  padding: 4rem;
+  font-weight: 400;
+}
 .group-number-label {
   position: absolute;
 }

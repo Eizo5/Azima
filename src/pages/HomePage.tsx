@@ -23,6 +23,7 @@ export default function HomePage() {
   const [sportsData, setSportsData] = useState([]);
   const [religionData, setReligionData] = useState([]);
 
+  console.log(user, "user");
   const randomGroups = async () => {
     try {
       const response = await axios.get("http://localhost:9000/randomGroups");

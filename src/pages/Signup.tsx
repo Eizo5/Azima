@@ -1,82 +1,64 @@
-//  Importing Styles
 import "../Styles/Navbar.css";
 import "../Styles/signin.css";
 
-//  Importing Components
 import NavBar from "../components/navbar";
 import Checkbox from "../components/Checkbox";
 import OurButton from "../components/OurButton";
 import CloudinaryUploadWidget from "../components/UploadImage";
+import Terms from "../components/Terms";
 
-//  Importing Icons
 import { Link, useNavigate } from "react-router-dom";
 import { FaUser, FaLock } from "react-icons/fa";
 import { CiMail } from "react-icons/ci";
 
-//  Importing Data
 import { PASSWORD_REGEX } from "../data/helpers";
 
-//  Importing Packages
-import { Cloudinary } from "@cloudinary/url-gen";
 import { useEffect, useState } from "react";
-
-//  Importing Images
-import ImgHolder from "../assets/EventImage.png";
-import { set } from "@cloudinary/url-gen/actions/variable";
 import useAuthentication from "../hooks/userHook";
+import ImgHolder from "../assets/EventImage.png";
 
 export default function () {
-  //  State Control for Input data
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [isPolicyChecked, setIsPolicyChecked] = useState(false);
-  const [name, setName] = useState("");
-  const [surname, setSurname] = useState("");
-  const [username, setUsername] = useState("");
   const [profile_image, setProfile_image] = useState(`${ImgHolder}`);
-  const [birthdate, setBirthdate] = useState("");
+  const [isPolicyChecked, setIsPolicyChecked] = useState(false);
+  const [isPasswordValid, setIsPasswordValid] = useState(true);
   const [preferences, setPreferences] = useState<number[]>([]);
-
-  // State contorl for Cloudinary
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [isEmailValid, setIsEmailValid] = useState(false);
+  const [termsPopup, setTermsPopup] = useState(false);
+  const [birthdate, setBirthdate] = useState("");
+  const { user, register } = useAuthentication();
+  const [stepTwo, setStepTwo] = useState(false);
+  const [username, setUsername] = useState("");
   const [publicId, setPublicId] = useState("");
-  const [cloudName] = useState("dkgrr55re");
+  const [password, setPassword] = useState("");
   const [uploadPreset] = useState("v6wusflm");
+  const [surname, setSurname] = useState("");
+  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
+  const [cloudName] = useState("dkgrr55re");
+  const navigate = useNavigate();
   const [uwConfig] = useState({
     cloudName,
     uploadPreset,
-    // cropping: true, //add a cropping step
-    // showAdvancedOptions: true,  //add advanced options (public_id and tag)
-    // sources: [ "local", "url"], // restrict the upload sources to URL and local files
-    // multiple: false,  //restrict upload to a single file
-    // folder: "user_images", //upload files to the specified folder
-    // tags: ["users", "profile"], //add the given tags to the uploaded files
-    // context: {alt: "user_uploaded"}, //add the given context data to the uploaded files
-    // clientAllowedFormats: ["images"], //restrict uploading to image files only
-    // maxImageFileSize: 2000000,  //restrict file size to less than 2MB
-    // maxImageWidth: 2000, //Scales the image down to a width of 2000 pixels before uploading
-    // theme: "purple", //change to a purple theme
+    theme: "purple",
+    multiple: false,
   });
 
-  // States to handle stepping to the next register step
-  const [stepTwo, setStepTwo] = useState(false);
-  const [isPasswordValid, setIsPasswordValid] = useState(true);
-  const [isEmailValid, setIsEmailValid] = useState(false);
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedDate = new Date(e.target.value);
+    const currentDate = new Date();
 
-  const navigate = useNavigate();
-  // Cloud init
-  const cld = new Cloudinary({
-    cloud: {
-      cloudName: "dkgrr55re",
-    },
-  });
+    if (selectedDate > currentDate) {
+      alert("Selected date cannot be in the future");
+    } else {
+      setBirthdate(e.target.value);
+    }
+  };
 
-  // Profile image instance
-  const myImage = cld.image(publicId);
+  const handlePopup = () => {
+    setTermsPopup(!termsPopup);
+  };
 
-  const { user, register } = useAuthentication();
-
-  // Submit click handling
   const handleSubmit = (e: any) => {
     const formData = {
       name,
@@ -93,8 +75,6 @@ export default function () {
     register(e, formData);
   };
 
-  const Interests: number[] = [];
-  // A function that should return an array to the prefrences state TBDDDDDDDDD
   const handleCheckboxesChange = (value: number) => {
     if (!preferences.includes(value)) {
       // If not present, add it to the array
@@ -105,34 +85,28 @@ export default function () {
     }
   };
 
-  // Validate the email address
-
   const validateEmail = (email: string) => {
     const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return regex.test(email);
   };
 
-  // Function to handle input change for password and validate it
   const handleChange = (e: any) => {
     const newPassword = e.target.value;
     setPassword(newPassword);
     setIsPasswordValid(validatePassword(newPassword));
   };
 
-  // Function to handle input change for Email and validate it
   const handleChangeEmail = (e: any) => {
     const newEmail = e.target.value;
     setEmail(newEmail);
     setIsEmailValid(validateEmail(newEmail));
   };
 
-  // Function to handle input change for Confirmed Password and validate it
   const handleChangeComnfiremdPass = (e: any) => {
     const newPassword = e.target.value;
     setConfirmPassword(newPassword);
   };
 
-  // Function to move on to step two
   const handleSubmitClick = () => {
     !isEmailValid && alert("Enter a valid Email");
     password !== confirmPassword &&
@@ -149,10 +123,8 @@ export default function () {
     }
   };
 
-  // Function to validate password
   const validatePassword = (password: string) => PASSWORD_REGEX.test(password);
 
-  // Function to Submit the Form
   const handleFormSubmission = async (e: any) => {
     e.preventDefault();
 
@@ -160,9 +132,7 @@ export default function () {
     }
   };
 
-  // Function to update the profile picture
   useEffect(() => {
-    // Fetch the profile image URL using the publicId and update the image source
     if (publicId) {
       // Here you can fetch the profile image URL using the publicId
       // For example, if the Cloudinary base URL is "https://res.cloudinary.com/<cloud_name>/image/upload/",
@@ -174,19 +144,33 @@ export default function () {
     }
   }, [publicId]);
 
-  // If user is logged in navigate to home page
   useEffect(() => {
     user && navigate("/home");
   });
 
   return (
     <div className="container">
+      {termsPopup && (
+        <div className="popup">
+          <div className="overlay">
+            <div className="popup-content popup-background">
+              <div className="terms-and-conn">
+                <Terms />
+              </div>
+
+              <button className="close-popup" onClick={handlePopup}>
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <NavBar navType="fnav" />
       <div
         className="wrapper-signup"
         style={{
           width: `${stepTwo && "75rem"}`,
-          marginTop: `${stepTwo && "11rem"} `,
+          marginTop: `${stepTwo ? "13.4rem" : "22rem"} `,
         }}
       >
         {stepTwo === false ? (
@@ -194,7 +178,7 @@ export default function () {
             <h1>Sign up</h1>
             <div className="input-box">
               <input
-                type="text"
+                type="email"
                 placeholder="Email"
                 value={email}
                 onChange={handleChangeEmail}
@@ -228,13 +212,17 @@ export default function () {
                 onChange={handleChangeComnfiremdPass}
                 required
               />
-              <label>
+              <label className="terms-and-con">
                 <input
                   checked={isPolicyChecked}
                   onChange={() => setIsPolicyChecked(!isPolicyChecked)}
                   type="checkbox"
                 />
-                I read and accept the <a href="">terms and conditions</a>
+                <p>
+                  {" "}
+                  I read and accept the{" "}
+                  <a onClick={handlePopup}>terms and conditions</a>
+                </p>
               </label>
             </div>
             <div className="register-button-stepone">
@@ -246,7 +234,7 @@ export default function () {
                 onClick={handleSubmitClick}
               />
             </div>
-            <div className="register-link">
+            <div className="register-link center-link">
               <p>
                 Already have an account? <Link to="/Signin">Sign-in!</Link>
               </p>
@@ -295,7 +283,7 @@ export default function () {
                     placeholder="Date of Birth"
                     required
                     value={birthdate}
-                    onChange={(e) => setBirthdate(e.target.value)}
+                    onChange={handleDateChange}
                   />
                 </div>
                 <h1 className="information-header to-left">Interests</h1>
@@ -327,7 +315,7 @@ export default function () {
                 </div>
               </div>
 
-              <div className="import-image-container">
+              <div className="import-image-container-singup">
                 <img src={profile_image} />
                 <CloudinaryUploadWidget
                   uwConfig={uwConfig}

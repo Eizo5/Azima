@@ -77,12 +77,12 @@ const NavBar = ({ navType }: NavBarProps) => {
         <div className="loginButtons">
           <OurButton
             onClick={() => navigate("/Signin")}
-            label="Sign in"
+            label="Login"
             variant="transparent"
           />
           <OurButton
             onClick={() => navigate("/Signup")}
-            label="Sign up"
+            label="Register"
             variant="primary"
           />
         </div>

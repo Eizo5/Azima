@@ -6,11 +6,14 @@ import useGroup from "../hooks/groupHook";
 
 const RequestInfo = ({ username, imgUrl, memberId }) => {
   const { id } = useParams();
-  const { removeAdmin } = useGroup();
+  const { joinGroupResponse } = useGroup();
 
-  const removeAdminClick = (e: any) => {
-    e.preventDefault();
-    removeAdmin(memberId, id);
+  const handleReject = () => {
+    joinGroupResponse(id, memberId, "reject");
+  };
+
+  const handleAccept = () => {
+    joinGroupResponse(id, memberId, "accept");
   };
 
   return (
@@ -21,8 +24,13 @@ const RequestInfo = ({ username, imgUrl, memberId }) => {
           <h1 className="member-name bold">{username}</h1>
         </div>
         <div className="buttons-member-info">
-          <OurButton label="Accept" thin onClick={() => {}} />
-          <OurButton label="Reject" variant="alert" thin onClick={() => {}} />
+          <OurButton label="Accept" thin onClick={handleAccept} />
+          <OurButton
+            label="Reject"
+            variant="alert"
+            thin
+            onClick={handleReject}
+          />
         </div>
       </div>
     </div>
