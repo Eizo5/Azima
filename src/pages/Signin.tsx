@@ -23,9 +23,8 @@ export default function () {
   };
 
   useEffect(() => {
-    user && navigate("/home");
+    user ? navigate("/home") : navigate("/signin");
   });
-
   return (
     <div className="container">
       <NavBar navType="fnav" />

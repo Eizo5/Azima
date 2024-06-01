@@ -34,7 +34,7 @@ const CreateEvent = () => {
     // maxImageWidth: 2000, //Scales the image down to a width of 2000 pixels before uploading
     // theme: "purple", //change to a purple theme
   });
-  const { createEvent } = useEvent();
+  const { createEvent, joinEvent } = useEvent();
   const [eventData, setEventData] = useState({
     name: "",
     group_id: id,
@@ -64,6 +64,17 @@ const CreateEvent = () => {
     setEventData({ ...eventData, [e.target.name]: e.target.value });
   };
 
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedDate = new Date(e.target.value);
+    const currentDate = new Date();
+
+    if (selectedDate <= currentDate) {
+      alert("The date must be in the future");
+    } else {
+      setEventData({ ...eventData, [e.target.name]: e.target.value });
+    }
+  };
+
   useEffect(() => {
     // Fetch the profile image URL using the publicId and update the image source
     if (publicId) {
@@ -81,13 +92,14 @@ const CreateEvent = () => {
       <form onSubmit={handleCreateEventClick}>
         <div className="create-event-container">
           <div className="form-container">
-            <label className="heading">Event Info</label>
+            <label className="heading purple">Event Info</label>
             <InputText
               label="Event Name *"
               placeholder="Enter your event name here..."
               value={eventData.name}
               onChange={handleInputChange}
               name="name"
+              required
             />
             <InputText
               label="Event Location *"
@@ -95,14 +107,16 @@ const CreateEvent = () => {
               value={eventData.location}
               onChange={handleInputChange}
               name="location"
+              required
             />
             <InputText
               label="Event Date *"
               placeholder="Enter your group location here..."
               value={eventData.event_date}
-              onChange={handleInputChange}
+              onChange={handleDateChange}
               name="event_date"
               date
+              required
             />
             <div className="split-container">
               <InputText
@@ -111,6 +125,7 @@ const CreateEvent = () => {
                 value={eventData.time}
                 onChange={handleInputChange}
                 name="time"
+                required
               />
             </div>
 
@@ -120,31 +135,28 @@ const CreateEvent = () => {
               value={eventData.age_restriction}
               onChange={handleInputChange}
               name="age_restriction"
+              number
             />
             <InputText
-              label="Event Capacity (Attendees)"
+              label="Event Capacity (Attendees) *"
               placeholder="Add a limit for number of attendees..."
               value={eventData.event_capacity}
               onChange={handleInputChange}
               name="event_capacity"
+              required
+              number
             />
 
-            <div className="split-container">
-              <InputText
-                label="Ticket Price"
-                placeholder="Example: 100"
-                value={eventData.ticket_price}
-                onChange={handleInputChange}
-                name="ticket_price"
-              />
-              <InputText
-                label="Currency"
-                placeholder="Example: Euro, TL..."
-                value={eventData.currency}
-                onChange={handleInputChange}
-                name="currency"
-              />
-            </div>
+            <InputText
+              label="Ticket Price *"
+              placeholder="Example: 100"
+              value={eventData.ticket_price}
+              onChange={handleInputChange}
+              name="ticket_price"
+              required
+              number
+            />
+
             <InputText
               label="What’s included in the ticket price? "
               placeholder="Example: One Soft Drink"
@@ -181,24 +193,14 @@ const CreateEvent = () => {
               name="rules"
             />
             <InputDesc
-              label="Group Description"
+              label="Event Description *"
               placeholder="Enter your group description here"
               value={eventData.description}
               onChange={handleInputChange}
               name="description"
+              required
             />
             <div className="checkboxes">
-              <Checkbox
-                label="I want my event to be private 
-"
-                onChange={() =>
-                  setEventData({
-                    ...eventData,
-                    is_event_private: !eventData.is_event_private,
-                  })
-                }
-                checked={eventData.is_event_private}
-              />
               <Checkbox
                 label="Allow contribution requests"
                 onChange={() =>
@@ -210,7 +212,6 @@ const CreateEvent = () => {
                 checked={eventData.is_contribution_allowed}
               />
             </div>
-
             <OurButton
               position=""
               label="Create Event"
@@ -219,8 +220,10 @@ const CreateEvent = () => {
             />
           </div>
 
-          <div className="imgHolder">
-            <img src={imgHolder} />
+          <div className="image-container-create-event">
+            <img
+              src={eventData.event_image ? eventData.event_image : imgHolder}
+            />
             <CloudinaryUploadWidget
               uwConfig={uwConfig}
               setPublicId={setPublicId}

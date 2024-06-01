@@ -4,20 +4,31 @@
   align-items: center;
   text-align: center;
   width: 100%;
+  height: fit-content;
+  box-sizing: border-box;
+  height: 45rem;
+}
+.event-single {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 33%;
   height: 100%;
   box-sizing: border-box;
+  padding-top: 2rem;
 }
 
 .event:hover .event-image {
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.6);
   cursor: pointer;
-  transform: scale(1.05);
 }
 
 .event-label {
   margin-top: 3rem;
-  max-width: 200px;
+  max-width: 300px;
   font-size: 32px;
+  height: fit-content;
   color: rgb(86, 17, 113);
 }
 

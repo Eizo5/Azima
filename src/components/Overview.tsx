@@ -1,24 +1,32 @@
 import "../Styles/settings.css";
-import { Event } from "./Event";
+
 import OurButton from "./OurButton";
-import imgHolder from "../assets/EventImage.png";
 import { InputText } from "./InputText";
 import { InputDesc } from "./InputDesc";
 import Checkbox from "./Checkbox";
 import Dropdown from "../components/Dropdown";
 import useGroup from "../hooks/groupHook";
-import { Group } from "../data/types";
 import CloudinaryUploadWidget from "../components/UploadImage";
+
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+
 import { eventType } from "../data/helpers";
 
+import GroupDefaultImg from "../assets/group-default-image.webp";
+import useAuthentication from "../hooks/userHook";
+
 const Overview = () => {
-  const { categories, updateGroup, getGroup } = useGroup();
+  const { categories, updateGroup, getGroup, deleteGroup } = useGroup();
   const [publicId, setPublicId] = useState("");
+  const [isOwner, setIsOwner] = useState(false);
   const [cloudName] = useState("dkgrr55re");
   const [uploadPreset] = useState("v6wusflm");
+  const [deletePopup, setDeletePopup] = useState(false);
+  const [confirmName, setConfirmName] = useState("");
+  const navigate = useNavigate();
   const { id } = useParams();
+  const { user } = useAuthentication();
   const [uwConfig] = useState({
     cloudName,
     uploadPreset,
@@ -51,6 +59,7 @@ const Overview = () => {
     is_online: false,
     is_f2f: false,
     categories: [],
+    owner_id: 0,
   });
 
   const handleInputChange = (e: any) => {
@@ -59,10 +68,27 @@ const Overview = () => {
 
   const handleSaveClick = (e: any) => {
     e.preventDefault();
-
     updateGroup(groupData);
+    window.location.reload();
   };
 
+  const toggleDeletePopup = () => {
+    setDeletePopup(!deletePopup);
+  };
+
+  const checkIsOwner = () => {
+    setIsOwner(groupData?.owner_id === user?.ID);
+  };
+
+  // TBD
+  const DeleteGroup = () => {
+    confirmName === groupData?.name
+      ? (() => {
+          deleteGroup(id);
+          navigate("/home");
+        })()
+      : alert("Group name does not match");
+  };
   useEffect(() => {
     getGroup(id).then((res) => {
       setGroupData({
@@ -98,19 +124,68 @@ const Overview = () => {
     }
   }, [publicId]);
 
+  useEffect(() => {
+    checkIsOwner();
+  }, [groupData]);
+
   return (
     <div>
+      {deletePopup && (
+        <div className="popup">
+          <div className="overlay">
+            <div className="popup-content">
+              <>
+                <div className="header">
+                  <h3>are you sure you want to delete </h3>
+                  <h3>{groupData?.name}? </h3>
+                  <InputText
+                    value={confirmName}
+                    placeholder="Enter group name to confirm"
+                    onChange={(e: any) => setConfirmName(e.target.value)}
+                  />
+                  <div className="pop-up-buttn">
+                    <OurButton
+                      position="center"
+                      label="Confirm"
+                      onClick={DeleteGroup}
+                    />
+                  </div>
+                </div>
+              </>
+
+              <button className="close-popup" onClick={toggleDeletePopup}>
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <h1 className="settings-header">Overview</h1>
       <form onSubmit={handleSaveClick}>
         <div className="group-image-name-container">
           <div className="account-image">
-            <img src={groupData ? groupData?.group_image : imgHolder} />
+            <img
+              src={
+                groupData?.group_image
+                  ? groupData?.group_image
+                  : GroupDefaultImg
+              }
+            />
             <CloudinaryUploadWidget
               uwConfig={uwConfig}
               setPublicId={setPublicId}
             />
           </div>
           <div className="group-name-container">
+            {isOwner && (
+              <div className="delete-group">
+                <OurButton
+                  label="Delete Group"
+                  variant="alert"
+                  onClick={toggleDeletePopup}
+                />
+              </div>
+            )}
             <InputText
               label="Group Name"
               placeholder={groupData?.name}
@@ -186,7 +261,9 @@ const Overview = () => {
             />
           </div>
         </div>
-        <OurButton position="right" label="Save" type="submit" />
+        <div className="fixed-button-corner">
+          <OurButton position="center" label="Save" type="submit" />
+        </div>
       </form>
     </div>
   );

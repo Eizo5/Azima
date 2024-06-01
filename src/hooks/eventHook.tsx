@@ -6,27 +6,8 @@ import { useNavigate } from "react-router-dom";
 
 const useEvent = () => {
   const [event, setEvent] = useState([]);
-  const { user } = useAuthentication();
+
   const navigate = useNavigate();
-  // Get groups if user is logged in
-  /*  const getMyEvents = async () => {
-    try {
-      if (user) {
-        const response = await axios.post("http://localhost:9000/userEvents", {
-          user_id: user.ID,
-        });
-
-        setEvents(() => response.data);
-      }
-    } catch (error: any) {
-      console.error("Couldn't get events");
-    }
-  };
-
-  useEffect(() => {
-    getMyEvents();
-  }, [user]);
-*/
 
   const createEvent = async (eventData: any) => {
     try {
@@ -62,8 +43,6 @@ const useEvent = () => {
         { user_id }
       );
 
-      console.log(response.data);
-
       return response.data;
     } catch (error) {
       console.error(error);
@@ -76,11 +55,11 @@ const useEvent = () => {
         user_id,
         event_id,
       });
-
       console.log(response.data);
       return response.data;
     } catch (error: any) {
       console.error(error.response.data.msg);
+      console.log("error");
     }
   };
 
@@ -123,7 +102,6 @@ const useEvent = () => {
         user_id,
       });
 
-      console.log(response.data);
       return response.data;
     } catch (error: any) {
       console.error(error.response.data.msg);
@@ -138,7 +116,6 @@ const useEvent = () => {
           event_id,
         }
       );
-      console.log(response.data);
       return response.data;
     } catch (error: any) {
       console.error(error.response.data.msg);
@@ -149,6 +126,33 @@ const useEvent = () => {
     try {
       const response = await axios.post(`http://localhost:9000/deleteRating`, {
         rate_id,
+      });
+
+      window.location.reload();
+      return response.data;
+    } catch (error: any) {
+      console.error(error.response.data.msg);
+    }
+  };
+
+  const getEventOwner = async (event_id: any) => {
+    try {
+      const response = await axios.post(`http://localhost:9000/getEventOwner`, {
+        event_id,
+      });
+
+      return response.data;
+
+      return response.data;
+    } catch (error: any) {
+      console.error(error.response.data.msg);
+    }
+  };
+
+  const deleteEvent = async (event_id: any) => {
+    try {
+      const response = await axios.post(`http://localhost:9000/deleteEvent`, {
+        event_id,
       });
 
       return response.data;
@@ -165,9 +169,11 @@ const useEvent = () => {
     leaveEvent,
     sendConRequest,
     getEventUsers,
+    getEventOwner,
     rateEvent,
     getEventRatings,
     deleteRating,
+    deleteEvent,
   };
 };
 

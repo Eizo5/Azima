@@ -2,7 +2,6 @@ import NavBar from "../components/navbar";
 import OurButton from "../components/OurButton";
 import { EventSlider } from "../components/EventSlider";
 import { Footer } from "../components/Footer";
-import MemberInfo from "../components/MemberInfo";
 import ReqInfo from "../components/ReqInfo";
 
 import Location from "../assets/Location.png";
@@ -21,11 +20,12 @@ import useAuthentication from "../hooks/userHook";
 import { Group, EventType, User, UserGroup } from "../data/types";
 
 import RequestInfo from "../components/RequestInfo";
+import { isUnder18 } from "../data/helpers";
 
-// joinStatus === "None"|"Pending"|"Member"
 const GroupPage = () => {
   const [groupEvents, setGroupEvents] = useState<EventType[]>([]);
   const [groupPastEvents, setGroupPastEvents] = useState<EventType[]>([]);
+  const [groupNewEvents, setGroupNewEvents] = useState<EventType[]>([]);
   const [groupRequests, setGroupRequests] = useState<User[]>([]);
   const [groupMembers, setGroupMembers] = useState<User[]>([]);
   const [isOwner, setIsOwner] = useState(false);
@@ -109,7 +109,6 @@ const GroupPage = () => {
     getGroupRequests(id).then((res) => setGroupRequests(res));
     getGroupPastEvents(id).then((res) => setGroupPastEvents(res));
     userGroup?.is_pending && setIsPending(true);
-    console.log(isPending, "isPending", userGroup?.is_pending);
   }, []);
 
   useEffect(() => {
@@ -119,6 +118,16 @@ const GroupPage = () => {
     checkIsOwner();
   });
 
+  useEffect(() => {
+    if (groupEvents) {
+      const newEvents = groupEvents.filter((event) => {
+        const eventDate = new Date(event.event_date);
+        const currentDate = new Date();
+        return eventDate >= currentDate;
+      });
+      setGroupNewEvents(newEvents);
+    }
+  }, [groupEvents]);
   return (
     <div>
       <NavBar navType="fnav" />
@@ -137,21 +146,23 @@ const GroupPage = () => {
             <div className="popup">
               <div className="overlay">
                 <div className="popup-content">
-                  <h3>Requests: </h3>
-                  {groupRequests ? (
+                  <h3 className="requests-header">Requests: </h3>
+                  {groupRequests && groupRequests.length !== 0 ? (
                     groupRequests.map((user) => (
                       <RequestInfo
                         username={user.username}
                         imgUrl={user.profile_image}
                         memberId={user.ID}
+                        requests={groupRequests}
+                        setRequests={setGroupRequests}
                       />
                     ))
                   ) : (
-                    <p>No requests found</p>
+                    <p className="no-req-found">No requests found</p>
                   )}
 
                   <button className="close-popup" onClick={togglePopup}>
-                    Close
+                    &times;
                   </button>
                 </div>
               </div>
@@ -164,23 +175,35 @@ const GroupPage = () => {
                   {groupData?.is_private_group ? (
                     <>
                       {" "}
-                      <h3>{groupData?.name} is private</h3>
+                      <h3
+                        className="requests-header"
+                        style={{ paddingBottom: "2rem" }}
+                      >
+                        {groupData?.name} is private
+                      </h3>
                     </>
                   ) : (
-                    <h3>{groupData?.name} is public</h3>
+                    <h3
+                      className="requests-header"
+                      style={{ paddingBottom: "2rem" }}
+                    >
+                      {groupData?.name} is public
+                    </h3>
                   )}
 
-                  <OurButton
-                    label={
-                      groupData?.is_private_group ? "Join Request" : "Join"
-                    }
-                    position="center"
-                    thin
-                    onClick={handleJoinClick}
-                  />
+                  <div style={{ paddingBottom: "2rem" }}>
+                    <OurButton
+                      label={
+                        groupData?.is_private_group ? "Join Request" : "Join"
+                      }
+                      position="center"
+                      thin
+                      onClick={handleJoinClick}
+                    />
+                  </div>
 
                   <button className="close-popup" onClick={toggleJoinPopup}>
-                    Close
+                    &times;
                   </button>
                 </div>
               </div>
@@ -190,7 +213,7 @@ const GroupPage = () => {
             <div className="popup">
               <div className="overlay">
                 <div className="popup-content">
-                  <h3>Members: </h3>
+                  <h3 className="requests-header">Members: </h3>
                   {groupMembers.map((user) => (
                     <ReqInfo
                       username={user.username}
@@ -199,7 +222,7 @@ const GroupPage = () => {
                     />
                   ))}
                   <button className="close-popup" onClick={toggleMemberPop}>
-                    Close
+                    &times;
                   </button>
                 </div>
               </div>
@@ -219,7 +242,14 @@ const GroupPage = () => {
             <div className="top-part">
               <h1>{groupData?.name}</h1>
 
-              {userGroup && !userGroup?.is_admin && !isOwner ? (
+              {groupData?.is_adult_only && isUnder18(user?.birthdate) ? (
+                <OurButton
+                  label="Adults Only"
+                  position="center"
+                  thin
+                  disabled
+                />
+              ) : userGroup && !userGroup?.is_admin && !isOwner ? (
                 <OurButton
                   label={userGroup?.is_pending ? "Request Sent" : "Leave"}
                   onClick={handleLeaveClick}
@@ -241,12 +271,17 @@ const GroupPage = () => {
               {userGroup?.is_admin && !isOwner && (
                 <div className="admin-buttons">
                   {groupData?.is_private_group && (
-                    <OurButton
-                      label="Requests"
-                      thin
-                      variant="transparent"
-                      onClick={togglePopup}
-                    />
+                    <>
+                      <div className="requests-notification-counter">
+                        {groupRequests.length}
+                      </div>
+                      <OurButton
+                        label="Requests"
+                        thin
+                        variant="transparent"
+                        onClick={togglePopup}
+                      />
+                    </>
                   )}
                   <OurButton
                     label="Add Event"
@@ -272,12 +307,17 @@ const GroupPage = () => {
               {isOwner && (
                 <div className="admin-buttons">
                   {groupData?.is_private_group && (
-                    <OurButton
-                      label="Requests"
-                      thin
-                      variant="transparent"
-                      onClick={togglePopup}
-                    />
+                    <>
+                      <div className="requests-notification-counter">
+                        {groupRequests.length}
+                      </div>
+                      <OurButton
+                        label="Requests"
+                        thin
+                        variant="transparent"
+                        onClick={togglePopup}
+                      />
+                    </>
                   )}
                   <OurButton
                     label="Add Event"
@@ -298,16 +338,16 @@ const GroupPage = () => {
               {eventInfo?.map(({ imgSrc, info }, index) => (
                 <div key={index} className="info">
                   <img src={imgSrc} alt="" />
-                  {index === 3 ? (
+                  {index === 3 && typeof info === "string" ? (
                     <p
                       className="member-hover"
                       onClick={(e) =>
-                        !info?.includes("0 Members") && toggleMemberPop(e)
+                        info?.charAt(0) !== "0" && toggleMemberPop(e)
                       }
                       style={{
-                        color: `${!info?.includes("0 Members") && "white"}`,
+                        color: `${info?.charAt(0) !== "0" && "white"}`,
                         textDecoration: `${
-                          !info?.includes("0 Members") && "underline"
+                          info?.charAt(0) !== "0" && "underline"
                         }`,
                       }}
                     >
@@ -329,6 +369,7 @@ const GroupPage = () => {
           </div>
           {(!userGroup || isPending) &&
           !isOwner &&
+          isPending &&
           groupData?.is_private_group ? (
             <>
               <label className="no-events-found">Private Group</label>
@@ -337,7 +378,11 @@ const GroupPage = () => {
           ) : (
             <div className="events-container">
               {groupEvents && groupEvents?.length !== 0 && (
-                <EventSlider isEvent object={groupEvents} label="New Events" />
+                <EventSlider
+                  isEvent
+                  object={groupNewEvents}
+                  label="New Events"
+                />
               )}
               {groupPastEvents && (
                 <EventSlider

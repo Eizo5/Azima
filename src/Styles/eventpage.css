@@ -28,3 +28,18 @@
 .others p .bold {
   font-weight: 700;
 }
+
+.star-container {
+  position: absolute;
+  right: 5rem;
+  display: flex;
+  font-size: 5rem;
+}
+.star-icon {
+  width: 5rem;
+}
+.star-container p {
+  margin-right: 4rem;
+  margin-top: 1.5rem;
+  font-weight: 600;
+}

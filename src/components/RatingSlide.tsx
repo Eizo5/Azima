@@ -1,22 +1,34 @@
 import { RatingType } from "../data/types";
 import Box from "@mui/material/Box";
 import Rating from "@mui/material/Rating";
-
+import useEvent from "../hooks/eventHook";
 import "swiper/css";
 import "swiper/swiper-bundle.css";
-
+import useAuthentication from "../hooks/userHook";
 import "../Styles/rating.css";
-import { formatDate, formatDateTwo } from "../data/helpers";
+import { formatDateTwo } from "../data/helpers";
+import { useNavigate } from "react-router-dom";
 type RatingSlideProps = {
   rating: RatingType | null;
 };
 
 const RatingSlide = ({ rating }: RatingSlideProps) => {
-  console.log(rating, "ratinginside");
+  const { user } = useAuthentication();
+  const { deleteRating } = useEvent();
+  const navigate = useNavigate();
+  const navigateToProfile = () => {
+    navigate(`/UserProfile/${rating?.user_id}`);
+  };
   return (
     <div className="rating-slide">
       <div className="stars-image">
-        <img src={rating?.profile_image} alt="stars" className="rating-image" />
+        <img
+          src={rating?.profile_image}
+          alt="stars"
+          className="rating-image"
+          onClick={navigateToProfile}
+          style={{ cursor: "pointer" }}
+        />
         <Box
           sx={{
             "& > legend": { mt: 2 },
@@ -28,16 +40,27 @@ const RatingSlide = ({ rating }: RatingSlideProps) => {
         >
           <Rating name="read-only" value={rating?.star} readOnly />
         </Box>
+        {user?.ID === rating?.user_id && (
+          <button
+            className="delete-rating-button"
+            onClick={() => deleteRating(rating?.rate_id)}
+          >
+            Delete
+          </button>
+        )}
       </div>
       <p>
-        <span className="rating-username"> {rating?.username}</span>{" "}
+        <span
+          onClick={navigateToProfile}
+          style={{ cursor: "pointer" }}
+          className="rating-username"
+        >
+          {" "}
+          {rating?.username}
+        </span>{" "}
         <span className="rating-date"> {formatDateTwo(rating?.rate_date)}</span>
       </p>
-      <p className="user-comment">
-        {" "}
-        I'm commenting rn from this user machine hello world. I need to write
-        more so im doing more writing. I'm commenting rn from this user machine
-      </p>
+      <p className="user-comment">{rating?.comment}</p>
     </div>
   );
 };

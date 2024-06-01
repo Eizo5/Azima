@@ -53,4 +53,30 @@ const formatDateTwo = (dateString: string | undefined) => {
   }
 };
 
-export { PASSWORD_REGEX, eventType, formatDate, formatDateTwo };
+const isDateInPast = (dateString: string | undefined): boolean => {
+  const date = new Date(dateString);
+  const now = new Date();
+
+  return date < now;
+};
+
+const isUnder18 = (dateString: string | undefined): boolean => {
+  const dateOfBirth = new Date(dateString);
+  const now = new Date();
+
+  const diffInMilliseconds = now.getTime() - dateOfBirth.getTime();
+  const diffInYears = Math.floor(
+    diffInMilliseconds / (1000 * 60 * 60 * 24 * 365)
+  );
+
+  return diffInYears < 18;
+};
+
+export {
+  PASSWORD_REGEX,
+  eventType,
+  formatDate,
+  formatDateTwo,
+  isDateInPast,
+  isUnder18,
+};

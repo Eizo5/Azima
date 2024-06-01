@@ -5,6 +5,13 @@
   color: white;
 }
 
+.img-container-event {
+  margin-top: 11.8rem;
+  padding: 3rem 5rem;
+  height: 50rem;
+  color: white;
+}
+
 .member-hover:hover {
   cursor: pointer;
 }
@@ -22,11 +29,22 @@
   height: 40rem;
 }
 
+.requests-header {
+  color: rgb(86, 17, 113);
+  font-weight: 700;
+}
 .event-container {
   padding: 1rem 5rem;
   margin-top: 25rem;
 }
-
+.no-req-found {
+  font-size: 2rem;
+  color: rgb(86, 17, 113);
+  text-align: center;
+  width: 100%;
+  padding: 4rem;
+  font-weight: 400;
+}
 .top-part {
   display: flex;
   justify-content: space-between;
@@ -54,7 +72,10 @@
 }
 
 .events-container {
-  padding: 5rem 15rem 10rem;
+  padding: 10rem 15rem 10rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7rem;
 }
 
 .event-container {

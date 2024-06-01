@@ -11,8 +11,9 @@ import AccountIcon from "../assets/AccountIcon.png";
 import LogoutIcon from "../assets/Logout.png";
 import Notifications from "../assets/Notifications.png";
 import Settings from "../assets/Settings.png";
-
+import { Group } from "../data/types";
 import "../Styles/Navbar.css";
+import useGroup from "../hooks/groupHook";
 
 interface NavBarProps {
   navType: string;
@@ -22,8 +23,10 @@ interface NavBarProps {
 const NavBar = ({ navType }: NavBarProps) => {
   const [scrolled, setScrolled] = useState(false);
   const [dropDown, setDropDown] = useState(false);
+  const [groupData, setGroupData] = useState<Group | null>(null);
 
   const { user, logout } = useAuthentication();
+  const { getGroup } = useGroup();
 
   //Navigation function
   const navigate = useNavigate();
@@ -44,6 +47,7 @@ const NavBar = ({ navType }: NavBarProps) => {
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
+    getGroup(Notifications).then((res) => setGroupData(res));
   }, []);
 
   // Navigation options

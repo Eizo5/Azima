@@ -9,19 +9,33 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import "../Styles/settings.css";
 
-import Overview from "../assets/Overview.png";
-import Members from "../assets/Members.png";
-import Bans from "../assets/Bans.png";
-import Admins from "../assets/Admins.png";
+import OverviewWhite from "../assets/overviewwhite.svg";
+import OverviewPurple from "../assets/Overview.png";
+
+import MembersWhite from "../assets/memberwhite.svg";
+import MembersPurple from "../assets/memberspurple.svg";
+
+import BansWhite from "../assets/Bans.png";
+import BansPurple from "../assets/banspurple.svg";
+
+import AdminsWhite from "../assets/Admins.png";
+import AdminsPurple from "../assets/adminspurple.svg";
+
 import GroupEventsImage from "../assets/GroupEvents2.png";
+import GroupEventPurple from "../assets/groupeventspurple.svg";
+
 import { Group } from "../data/types";
 import { useState, useEffect } from "react";
 import useGroup from "../hooks/groupHook";
+import useAuthentication from "../hooks/userHook";
+import OurButton from "../components/OurButton";
 
 const GroupSettings = () => {
   const [groupData, setGroupData] = useState<Group | null>(null);
   const { id } = useParams();
   const { getGroup } = useGroup();
+  const navigate = useNavigate();
+  const { user } = useAuthentication();
 
   const [settingStatus, setSettingStatus] = useState("a");
   const handleAccountClick = () => {
@@ -49,6 +63,9 @@ const GroupSettings = () => {
 
   return (
     <div>
+      <div className="go-back-button">
+        <OurButton label="Back" onClick={() => navigate(`/GroupPage/${id}`)} />
+      </div>
       {settingStatus === "a"
         ? (selectedButton = "a-selected")
         : settingStatus === "b"
@@ -67,11 +84,16 @@ const GroupSettings = () => {
         label3="Bans"
         label4="Admins"
         label5="Group Events"
-        icon1={Overview}
-        icon2={Members}
-        icon3={Bans}
-        icon4={Admins}
+        icon1={OverviewWhite}
+        icon2={MembersWhite}
+        icon3={BansWhite}
+        icon4={AdminsWhite}
         icon5={GroupEventsImage}
+        icon12={OverviewPurple}
+        icon22={MembersPurple}
+        icon32={BansPurple}
+        icon42={AdminsPurple}
+        icon52={GroupEventPurple}
         onClick1={handleAccountClick}
         onClick2={handleMyGroupsClick}
         onClick3={handleMyEventsClick}
@@ -84,7 +106,7 @@ const GroupSettings = () => {
         {settingStatus === "a" ? (
           <Overview1 />
         ) : settingStatus === "b" ? (
-          <Member />
+          <Member owner_id={groupData?.owner_id} />
         ) : settingStatus === "c" ? (
           <Bans1 />
         ) : settingStatus === "d" ? (

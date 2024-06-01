@@ -8,12 +8,28 @@ import { useEffect, useState } from "react";
 import CloudinaryUploadWidget from "../components/UploadImage";
 import { User } from "../data/types";
 import useGroup from "../hooks/groupHook";
-
+import { PASSWORD_REGEX } from "../data/helpers";
 const AccountSettings = ({}) => {
-  const { user, updateUser, preferences, setPreferences, setUser } =
-    useAuthentication();
+  const {
+    user,
+    updateUser,
+    updatePassword,
+    preferences,
+    deleteAccount,
+    setPreferences,
+    setUser,
+    logout,
+  } = useAuthentication();
   const { categories, getCategories } = useGroup();
+
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [publicId, setPublicId] = useState("");
+  const [isPasswordValid, setIsPasswordValid] = useState(true);
+  const [deletePopup, setDeletePopup] = useState(false);
+  const [updatePassPopup, setUpdatePassPopup] = useState(false);
+  const [confirmName, setConfirmName] = useState("");
   const [cloudName] = useState("dkgrr55re");
   const [uploadPreset] = useState("v6wusflm");
   const [uwConfig] = useState({
@@ -31,6 +47,41 @@ const AccountSettings = ({}) => {
     // maxImageWidth: 2000, //Scales the image down to a width of 2000 pixels before uploading
     // theme: "purple", //change to a purple theme
   });
+
+  const handleUpdatePassword = (e: any) => {
+    e.preventDefault();
+
+    oldPassword !== user?.password
+      ? alert("Old password is incorrect")
+      : !validatePassword(newPassword)
+      ? alert(
+          "Password must contain at least one lowercase letter, one uppercase letter, one number, and be between 8 and 25 characters long."
+        )
+      : newPassword !== confirmPassword
+      ? alert("Passwords do not match")
+      : oldPassword === user?.password &&
+        newPassword === confirmPassword &&
+        (() => {
+          alert("Password updated successfully. You will be logged out.");
+          updatePassword(user?.ID, newPassword);
+          logout();
+        })();
+  };
+
+  const DeleteAccount = () => {
+    confirmName === user?.username
+      ? deleteAccount(user?.ID)
+      : alert("usernames do not match");
+  };
+  const toggleDeletePopup = (e: any) => {
+    e.preventDefault();
+    setDeletePopup(!deletePopup);
+  };
+
+  const toggleUpdatePassPopup = (e: any) => {
+    e.preventDefault();
+    setUpdatePassPopup(!updatePassPopup);
+  };
   // const [preferences, setPreferences] = useState<number[]>([]);
   const handleInputChange = (e: any) => {
     setUser({ ...user, [e.target.name]: e.target.value } as User);
@@ -39,20 +90,16 @@ const AccountSettings = ({}) => {
   const handleSaveClick = (e: any) => {
     ({ ...user, preferences });
     updateUser(user?.ID, { ...user, preferences });
+    window.location.reload();
   };
 
-  /*   const handleCheckboxesChange = (value: number) => {
-    if (!preferences.includes(value)) {
-      // If not present, add it to the array
-      setPreferences([...preferences, value]);
-    } else {
-      // If present, remove it from the array
-      setPreferences(preferences.filter((pref) => pref !== value));
-    }
-  }; its
- */
-  let passwordLength = user?.password?.length;
+  const handleNewPasswordChange = (e: any) => {
+    setNewPassword(e.target.value);
+    setIsPasswordValid(validatePassword(newPassword));
+  };
 
+  let passwordLength = user?.password?.length;
+  const validatePassword = (password: string) => PASSWORD_REGEX.test(password);
   // Get user data
   useEffect(() => {
     getCategories();
@@ -72,112 +119,221 @@ const AccountSettings = ({}) => {
 
   return (
     <>
-      <div className="account-container">
-        {" "}
-        <div className="account-image">
-          <img src={user?.profile_image} />
-          <CloudinaryUploadWidget
-            uwConfig={uwConfig}
-            setPublicId={setPublicId}
-          />
-        </div>
-        <div className="info-container">
-          <InputText
-            placeholder={user?.name}
-            label="Name"
-            onChange={handleInputChange}
-            defaultValue={user?.name}
-            name="name"
-          />
+      <div className="account-settings-all">
+        {deletePopup && (
+          <div className="popup">
+            <div className="overlay">
+              <div className="popup-content">
+                <>
+                  <div className="header">
+                    <h3>are you sure you want to delete </h3>
+                    <h3>{user?.username}? </h3>
+                    <InputText
+                      value={confirmName}
+                      placeholder="Enter group name to confirm"
+                      onChange={(e: any) => setConfirmName(e.target.value)}
+                    />
+                    <div className="pop-up-buttn">
+                      <OurButton
+                        position="center"
+                        label="Confirm"
+                        onClick={DeleteAccount}
+                      />
+                    </div>
+                  </div>
+                </>
 
-          <InputText
-            placeholder={user?.surname}
-            label="Surname"
-            onChange={handleInputChange}
-            defaultValue={user?.surname}
-            name="surname"
-          />
-          <InputText
-            placeholder={user?.username}
-            label="Username"
-            onChange={handleInputChange}
-            defaultValue={user?.username}
-            name="username"
-          />
-          <InputText
-            placeholder={user?.birthdate}
-            label="Birthdate"
-            onChange={handleInputChange}
-            defaultValue={user?.birthdate}
-            name="birthdate"
-            date
-          />
+                <button className="close-popup" onClick={toggleDeletePopup}>
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
-          <InputText
-            placeholder={user?.email}
-            label="Email"
-            defaultValue={user?.email}
-          />
-          <h3 className="bold">Password</h3>
-          <h3>{"*".repeat(passwordLength)}</h3>
-          <OurButton thin label="Delete Account" variant="alert" />
-        </div>
-      </div>
-      <div className="checkboxes-signup">
-        {categories &&
-          categories.map((category) => (
-            <Checkbox
-              key={category?.category_id}
-              label={category?.value}
-              checked={preferences?.includes(category?.category_id)}
-              onChange={() => {
-                const isChecked = preferences?.includes(category?.category_id);
-                isChecked && preferences
-                  ? setPreferences(
-                      preferences?.filter(
-                        (pref) => pref !== category?.category_id
-                      )
-                    )
-                  : setPreferences([...preferences, category?.category_id]);
-              }}
+        {updatePassPopup && (
+          <div className="popup">
+            <div className="overlay">
+              <div className="popup-content">
+                <>
+                  <div className="header">
+                    <form onSubmit={handleUpdatePassword}>
+                      <InputText
+                        value={oldPassword}
+                        placeholder="Enter your old password"
+                        onChange={(e: any) => setOldPassword(e.target.value)}
+                        password
+                        required
+                      />
+                      <InputText
+                        value={newPassword}
+                        placeholder="Enter your new password"
+                        onChange={handleNewPasswordChange}
+                        password
+                        required
+                      />
+                      {!isPasswordValid && (
+                        <p style={{ color: "red", maxWidth: "43rem" }}>
+                          Password must contain at least one lowercase letter,
+                          one uppercase letter, one number, and be between 8 and
+                          25 characters long.
+                        </p>
+                      )}
+                      <InputText
+                        value={confirmPassword}
+                        placeholder="confirm your new password"
+                        onChange={(e: any) =>
+                          setConfirmPassword(e.target.value)
+                        }
+                        password
+                        required
+                      />
+                      <div className="pop-up-buttn">
+                        <OurButton
+                          position="center"
+                          label="Confirm"
+                          onClick={handleUpdatePassword}
+                          type="submit"
+                        />
+                      </div>
+                    </form>
+                  </div>
+                </>
+
+                <button className="close-popup" onClick={toggleUpdatePassPopup}>
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+        <h1 className="settings-header-settings">Account</h1>
+        <div className="account-container">
+          <div className="account-image-settings">
+            <div>
+              {" "}
+              <img src={user?.profile_image} />
+              <CloudinaryUploadWidget
+                uwConfig={uwConfig}
+                setPublicId={setPublicId}
+              />
+            </div>
+
+            <OurButton label="Save" onClick={handleSaveClick} />
+          </div>
+          <div className="info-container-settings">
+            <InputText
+              placeholder={user?.name}
+              label="Name"
+              onChange={handleInputChange}
+              defaultValue={user?.name}
+              name="name"
             />
-          ))}
+            <InputText
+              placeholder={user?.surname}
+              label="Surname"
+              onChange={handleInputChange}
+              defaultValue={user?.surname}
+              name="surname"
+            />
+            <InputText
+              placeholder={user?.username}
+              label="Username"
+              onChange={handleInputChange}
+              defaultValue={user?.username}
+              name="username"
+            />
+            <InputText
+              placeholder={user?.birthdate}
+              label="Birthdate"
+              onChange={handleInputChange}
+              defaultValue={user?.birthdate}
+              name="birthdate"
+              date
+            />
+            <InputText
+              placeholder={user?.email}
+              label="Email"
+              defaultValue={user?.email}
+            />{" "}
+            <h3 className="bold password-settings">Password</h3>
+            <h3 className="purple">{"*".repeat(passwordLength)}</h3>
+            <OurButton
+              label="Change Password"
+              thin
+              onClick={toggleUpdatePassPopup}
+            />
+            <h1 className="bold set-label" style={{ marginTop: "4rem" }}>
+              Interests
+            </h1>
+            <div className="checkboxe-signup">
+              {categories &&
+                categories.map((category) => (
+                  <Checkbox
+                    key={category?.category_id}
+                    label={category?.value}
+                    checked={preferences?.includes(category?.category_id)}
+                    onChange={() => {
+                      const isChecked = preferences?.includes(
+                        category?.category_id
+                      );
+                      isChecked && preferences
+                        ? setPreferences(
+                            preferences?.filter(
+                              (pref) => pref !== category?.category_id
+                            )
+                          )
+                        : setPreferences([
+                            ...preferences,
+                            category?.category_id,
+                          ]);
+                    }}
+                  />
+                ))}
+            </div>
+            <h1 className="bold set-label">Privacy</h1>
+            <div className="checkbox-div">
+              <Checkbox
+                label="Display my name in groups"
+                checked={user?.is_name_private}
+                onChange={() =>
+                  setUser({
+                    ...user,
+                    is_name_private: !user?.is_name_private,
+                  } as User)
+                }
+              />
+              <Checkbox
+                label="Display my email in groups"
+                checked={user?.is_email_private}
+                onChange={() =>
+                  setUser({
+                    ...user,
+                    is_email_private: !user?.is_email_private,
+                  } as User)
+                }
+              />
+              <Checkbox
+                label="Send me notifications about updates"
+                checked={user?.is_updates_notifications_on}
+                onChange={() =>
+                  setUser({
+                    ...user,
+                    is_updates_notifications_on:
+                      !user?.is_updates_notifications_on,
+                  } as User)
+                }
+              />
+            </div>
+            <OurButton
+              thin
+              label="Delete Account"
+              variant="alert"
+              onClick={toggleDeletePopup}
+            />
+          </div>
+        </div>
       </div>
-      <h1 className="bold set-label">Privacy</h1>
-      <div className="checkbox-div">
-        <Checkbox
-          label="Display my name in groups"
-          checked={user?.is_name_private}
-          onChange={() =>
-            setUser({
-              ...user,
-              is_name_private: !user?.is_name_private,
-            } as User)
-          }
-        />
-        <Checkbox
-          label="Display my email in groups"
-          checked={user?.is_email_private}
-          onChange={() =>
-            setUser({
-              ...user,
-              is_email_private: !user?.is_email_private,
-            } as User)
-          }
-        />
-        <Checkbox
-          label="Send me notifications about updates"
-          checked={user?.is_updates_notifications_on}
-          onChange={() =>
-            setUser({
-              ...user,
-              is_updates_notifications_on: !user?.is_updates_notifications_on,
-            } as User)
-          }
-        />
-      </div>
-
-      <OurButton label="Save" onClick={handleSaveClick} />
     </>
   );
 };

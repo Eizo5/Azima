@@ -2,12 +2,14 @@ import "swiper/css";
 import "swiper/swiper-bundle.css";
 
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation } from "swiper/modules";
+import { Navigation, Autoplay } from "swiper/modules";
 
+import Star from "../assets/star-icon.svg";
 import Box from "@mui/material/Box";
 import Rating from "@mui/material/Rating";
 import Typography from "@mui/material/Typography";
 
+import { InputText } from "../components/InputText";
 import RatingSlide from "../components/RatingSlide";
 import NavBar from "../components/navbar";
 import OurButton from "../components/OurButton";
@@ -23,7 +25,7 @@ import _Date from "../assets/date.svg";
 import "../Styles/groupPage.css";
 
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { EventType, EventUser, RatingType } from "../data/types";
 import useEvent from "../hooks/eventHook";
 
@@ -31,15 +33,20 @@ import useAuthentication from "../hooks/userHook";
 
 import { formatDate } from "../data/helpers";
 import { InputDesc } from "../components/InputDesc";
+import { auto } from "@cloudinary/url-gen/actions/resize";
 
 const EventPage = () => {
   const [eventData, setEventData] = useState<EventType | null>(null);
   const [eventUser, setEventUser] = useState<EventUser | null>(null);
   const [ratings, setRatings] = useState<RatingType[] | null>(null);
+  const [deleteEventPopup, setDeleteEventPopup] = useState(false);
+  const [ownerId, setOwnerId] = useState<number | null>(null);
 
+  const [isOwner, setIsOwner] = useState(false);
   const [conPopup, setConPopup] = useState(false);
   const [ratePopup, setRatePopup] = useState(false);
-
+  const [conRequestsPopup, setConRequestsPopup] = useState(false);
+  const navigate = useNavigate();
   const [didUserRate, setDidUserRate] = useState(false);
   const [isPast, setIsPast] = useState(false);
   const { id } = useParams();
@@ -51,10 +58,13 @@ const EventPage = () => {
     rateEvent,
     getEventUsers,
     getEventRatings,
+    getEventOwner,
+    deleteEvent,
   } = useEvent();
   const { user } = useAuthentication();
   const [star, setStar] = useState(0);
   const [comment, setComment] = useState("");
+  const [confirmName, setConfirmName] = useState("");
 
   const eventInfo = [
     { imgSrc: Location, info: eventData?.location },
@@ -69,6 +79,26 @@ const EventPage = () => {
     },
     { imgSrc: Ticket, info: eventData?.ticket_price },
   ];
+
+  const toggleConRequestsPopup = (e: any) => {
+    e.preventDefault();
+    setConRequestsPopup(!conRequestsPopup);
+  };
+
+  const toggleDeleteEventPopup = (e: any) => {
+    e.preventDefault();
+    setDeleteEventPopup(!deleteEventPopup);
+  };
+
+  const handleDeleteClick = (e: any) => {
+    e.preventDefault();
+    eventData?.name === confirmName
+      ? (() => {
+          deleteEvent(id);
+          navigate(`/GroupPage/${eventData?.group_id}`);
+        })()
+      : alert("Name does not match");
+  };
 
   const handleRateClick = (e: any) => {
     e.preventDefault();
@@ -89,6 +119,7 @@ const EventPage = () => {
   const handleContributeReq = (e: any) => {
     e.preventDefault();
     sendConRequest(id, user?.ID);
+    window.location.reload();
   };
 
   const toggleConPopUp = () => {
@@ -111,11 +142,21 @@ const EventPage = () => {
     // Compare the input date with the current date
     return inputDate < currentDate;
   }
+  const calculateRatingAvg = () => {
+    let total = 0;
+    ratings?.map((rating) => {
+      total += rating.star;
+    });
+    return total / (ratings?.length ?? 0);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       const data = await getEventData(id);
       setEventData(data);
+      const eventOwner = await getEventOwner(id);
+      setOwnerId(eventOwner);
+
       const ratings = await getEventRatings(id);
       setRatings(ratings);
       if (data?.event_date && isDateInPast(data.event_date)) {
@@ -146,14 +187,59 @@ const EventPage = () => {
     }
   }, [ratings]);
 
+  useEffect(() => {
+    if (ownerId === user?.ID) {
+      setIsOwner(true);
+    }
+  }, [ownerId]);
+
+  useEffect(() => {
+    if (ownerId === user?.ID) {
+      setIsOwner(true);
+    }
+  }),
+    [ownerId];
+  console.log(calculateRatingAvg(), "isOwner");
   return (
     <div>
+      {deleteEventPopup && (
+        <div className="popup">
+          <div className="overlay">
+            <div className="popup-content">
+              <>
+                <div className="header">
+                  <h3>are you sure you want to delete </h3>
+                  <h3>{eventData?.name}</h3>
+                  <InputText
+                    value={confirmName}
+                    placeholder="Enter event name to confirm"
+                    onChange={(e: any) => setConfirmName(e.target.value)}
+                  />
+                  <div className="pop-up-buttn">
+                    <OurButton
+                      position="center"
+                      label="Confirm"
+                      onClick={handleDeleteClick}
+                    />
+                  </div>
+                </div>
+              </>
+
+              <button className="close-popup" onClick={toggleDeleteEventPopup}>
+                &times;
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {conPopup && (
         <div className="popup">
           <div className="overlay">
             <div className="popup-content">
-              <h1>Do you want to help orignize this event</h1>
-              <p>
+              <h1 className="do-you-want">
+                Do you want to help orignize this event
+              </h1>
+              <p className="by-clicking">
                 By clicking on the button below you will send a request to the
                 event owner to help organize the event.
               </p>
@@ -165,7 +251,7 @@ const EventPage = () => {
               />
 
               <button className="close-popup" onClick={toggleConPopUp}>
-                Close
+                &times;
               </button>
             </div>
           </div>
@@ -217,7 +303,33 @@ const EventPage = () => {
               </div>
 
               <button className="close-popup" onClick={toggleRatePopUp}>
-                Close
+                &times;
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {conRequestsPopup && (
+        <div className="popup">
+          <div className="overlay">
+            <div className="popup-content">
+              {/*     <h3 className="requests-header">Requests: </h3>
+                  {groupRequests && groupRequests.length !== 0 ? (
+                    groupRequests.map((user) => (
+                      <RequestInfo
+                        username={user.username}
+                        imgUrl={user.profile_image}
+                        memberId={user.ID}
+                        requests={groupRequests}
+                        setRequests={setGroupRequests}
+                      />
+                    ))
+                  ) : (
+                    <p className="no-req-found">No requests found</p>
+                  )}
+ */}
+              <button className="close-popup" onClick={toggleConRequestsPopup}>
+                &times;
               </button>
             </div>
           </div>
@@ -225,7 +337,7 @@ const EventPage = () => {
       )}
       <NavBar navType="fnav" />
       <div
-        className="img-container"
+        className="img-container-event"
         style={{
           position: "relative",
         }}
@@ -239,7 +351,27 @@ const EventPage = () => {
           <h1>{eventData?.name}</h1>
 
           <div className="admin-buttons">
-            {isPast && (
+            {isOwner && (
+              <>
+                {" "}
+                <div className="requests-notification-counter-2">
+                  {/*   {groupRequests.length} */}
+                </div>
+                <OurButton
+                  label="Contribution Requests"
+                  thin
+                  variant="transparent"
+                  onClick={toggleConRequestsPopup}
+                />
+                <OurButton
+                  label="Delete Event"
+                  variant="alert"
+                  thin
+                  onClick={toggleDeleteEventPopup}
+                />
+              </>
+            )}
+            {isPast && !isOwner && (
               <OurButton
                 label={didUserRate ? "Rating Submited" : "Rate Event"}
                 onClick={toggleRatePopUp}
@@ -248,36 +380,54 @@ const EventPage = () => {
                 disabled={didUserRate}
               />
             )}
-            {!eventUser?.is_con_pending && !isPast && (
+            {!eventUser && !isPast && !isOwner && (
+              <OurButton
+                label={"Join"}
+                onClick={handleJoinClick}
+                variant="transparent"
+                thin
+              />
+            )}
+            {!isPast && (
               <>
-                <OurButton
-                  label={!eventUser ? "Join" : "Leave"}
-                  onClick={!eventUser ? handleJoinClick : handleLeaveClick}
-                  variant="transparent"
-                  thin
-                />
-
-                {eventData?.is_contribution_allowed && eventUser && (
-                  <OurButton
-                    label={
-                      eventUser?.is_con_pending
-                        ? "Request sent"
-                        : eventUser?.is_contributer
-                        ? "Contributer"
-                        : "Contribute"
-                    }
-                    thin
-                    variant="transparent"
-                    onClick={toggleConPopUp}
-                    disabled={
-                      eventUser?.is_con_pending || eventUser?.is_contributer
-                    }
-                  />
+                {!isOwner && eventUser && (
+                  <>
+                    <OurButton
+                      label={"Leave"}
+                      onClick={handleLeaveClick}
+                      variant="transparent"
+                      thin
+                    />
+                    <OurButton
+                      label={
+                        eventUser?.is_con_pending
+                          ? "Request sent"
+                          : eventUser?.is_contributer
+                          ? "Contributor"
+                          : "Contribute"
+                      }
+                      thin
+                      variant="transparent"
+                      onClick={toggleConPopUp}
+                      disabled={
+                        eventUser?.is_con_pending || eventUser?.is_contributer
+                      }
+                    />
+                  </>
                 )}
               </>
             )}
+            {!eventData?.is_contribution_allowed && eventUser && (
+              <OurButton label="Joined" thin variant="transparent" disabled />
+            )}
           </div>
         </div>
+        {isPast && (
+          <div className="star-container">
+            <p>{ratings?.length !== 0 && calculateRatingAvg().toFixed(1)}</p>
+            <img src={Star} alt="star" className="star-icon" />
+          </div>
+        )}
         <div className="info-container">
           {eventInfo.map(({ imgSrc, info }, index) => (
             <div key={index} className="info">
@@ -289,23 +439,7 @@ const EventPage = () => {
       </div>
       <div className="event-description">
         <h3>Event Program</h3>
-        <p>
-          A wonderful way to discover three of the most stunning beaches of
-          Crete. A convenient way to discover the unique beaches of Glyka Nera
-          and Marmara, where you will have enough time to enjoy the turquoise
-          waters as well as the secluded fishing village of Loutro, with no
-          roads, only accessible by the sea! We take you from Sfakia to Glyka
-          Nera (Sweet Water beach) where you have free time to enjoy a swim in
-          the clear turquoise water. Then at the time you arrange with your
-          captain, you will be picked up and taken to Marmara (marble) beach,
-          where you also have free time to enjoy the area. There is a wonderful
-          restaurant overlooking the beach which it's our top recommendation for
-          a lunch stop. You arrange a time with your captain again to be picked
-          up and he will take you to your 3rd stop, the small, picturesque
-          village of Loutro, the ideal location for an afternoon coffee and
-          swim. You can be picked up at your preferred time and brought back to
-          Sfakia.
-        </p>
+        <p>{eventData?.description}</p>
         <h3>Rules: </h3>
         <p>{eventData?.rules}</p>
       </div>
@@ -338,20 +472,27 @@ const EventPage = () => {
         </p>
       </div>
 
-      <Swiper
-        modules={[Navigation]}
-        spaceBetween={0}
-        slidesPerView={4}
-        navigation
-        onSlideChange={() => console.log("slide change")}
-        onSwiper={(swiper) => console.log(swiper)}
-      >
-        {ratings?.map((group) => (
-          <SwiperSlide>
-            <RatingSlide rating={group} />
-          </SwiperSlide>
-        ))}
-      </Swiper>
+      {ratings && ratings.length !== 0 && (
+        <div style={{ padding: "5rem" }}>
+          <h2 className="purple" style={{ paddingBottom: "2rem" }}>
+            Event Ratings
+          </h2>
+          <Swiper
+            modules={[Autoplay]}
+            spaceBetween={0}
+            slidesPerView={4}
+            autoplay={{ delay: 5000, disableOnInteraction: false }}
+            onSlideChange={() => console.log("slide change")}
+            onSwiper={(swiper) => console.log(swiper)}
+          >
+            {ratings?.map((rating) => (
+              <SwiperSlide>
+                <RatingSlide rating={rating} />
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </div>
+      )}
       <Footer />
     </div>
   );

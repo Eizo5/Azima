@@ -17,13 +17,18 @@ const Bans = () => {
   return (
     <div>
       <h1 className="settings-header">Bans</h1>
-      {bannedMembers.map((member) => (
-        <BannedInfo
-          username={member.username}
-          imgUrl={member.profile_image}
-          ban={member.ID}
-        />
-      ))}
+      <h1 className="bold set-label">{bannedMembers?.length} Bans</h1>
+      <div className="members-container-members">
+        {bannedMembers?.map((member) => (
+          <BannedInfo
+            username={member.username}
+            imgUrl={member.profile_image}
+            ban={member.ID}
+            setban={setBannedMembers}
+            banned={bannedMembers}
+          />
+        ))}
+      </div>
     </div>
   );
 };

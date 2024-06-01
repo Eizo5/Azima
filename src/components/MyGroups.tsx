@@ -8,31 +8,34 @@ const MyGroups = () => {
 
   return (
     <div>
-      <OurButton position="right" label="Create Group" />
-      <h1 className="bold set-label">Owner</h1>
+      <h1 className="settings-header push-down">My Groups</h1>
+      <h2 className="my-events-headers bold ">Owner</h2>
       <div className="events-together">
         {userOwnerGroups?.map((group) => (
           <Event
             label={group.name}
+            isSingle
             imageUrl={group.group_image}
             id={group.group_id}
           />
         ))}
       </div>
-      <h1 className="bold set-label">Admin</h1>
+      <h2 className="my-events-headers bold ">Admin</h2>
       <div className="events-together">
         {userAdminGroups?.map((group) => (
           <Event
+            isSingle
             label={group.name}
             imageUrl={group.group_image}
             id={group.group_id}
           />
         ))}
       </div>
-      <h1 className="bold set-label">Member</h1>
+      <h2 className="my-events-headers bold ">Member</h2>
       <div className="events-together">
         {userGroups?.map((group) => (
           <Event
+            isSingle
             label={group.name}
             imageUrl={group.group_image}
             id={group.group_id}

@@ -47,7 +47,7 @@ const CreateGroup = () => {
     is_private_group: false,
     is_online: false,
     is_f2f: false,
-    owner_id: user?.ID || "",
+    owner_id: user?.ID,
     categories: [],
   });
   const [defaultCategories, setDefaultCategories] = useState<
@@ -61,6 +61,8 @@ const CreateGroup = () => {
 
   const handleCreateGroupClick = (e) => {
     e.preventDefault();
+
+    setGroupData({ ...groupData, owner_id: user?.ID });
     createGroup(groupData);
   };
 
@@ -69,7 +71,7 @@ const CreateGroup = () => {
   };
 
   useEffect(() => {
-    setGroupData({ ...groupData, owner_id: user?.ID || "" });
+    /* setGroupData({ ...groupData, owner_id: user?.ID || "" }); */
     setDefaultCategories(
       groupData?.categories?.map(({ category_id, name }) => ({
         value: name,
@@ -77,6 +79,7 @@ const CreateGroup = () => {
         category_id,
       }))
     );
+
     const eventTypes = [];
     if (groupData.is_f2f) {
       eventTypes.push({ id: 1, value: "f2f", label: "f2f" });
@@ -105,13 +108,14 @@ const CreateGroup = () => {
       <form onSubmit={handleCreateGroupClick}>
         <div className="create-event-container">
           <div className="form-container">
-            <label className="heading">Create your group! </label>
+            <label className="heading purple">Create your group! </label>
             <InputText
               label="Group Name *"
               placeholder="Enter your group name here..."
               value={groupData.name}
               onChange={handleInputChange}
               name="name"
+              required
             />
             <InputText
               label="Location *"
@@ -119,6 +123,7 @@ const CreateGroup = () => {
               value={groupData.location}
               onChange={handleInputChange}
               name="location"
+              required
             />
             <div className="dropdowns">
               <Dropdown
@@ -154,11 +159,13 @@ const CreateGroup = () => {
               />
             </div>
             <InputDesc
-              label="Group Description"
+              label="Group Description *"
               placeholder="Enter your group description here"
               value={groupData.description}
               onChange={handleInputChange}
               name="description"
+              required
+              isTextArea
             />
             <div className="checkboxes">
               <Checkbox

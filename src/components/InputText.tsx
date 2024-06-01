@@ -10,19 +10,25 @@ export const InputText = ({
   name,
   defaultValue,
   date,
+  required,
+  password,
+  number,
 }) => {
   return (
     <div className="input-text">
       <label htmlFor={name}>{label}</label>
       <input
         className={`text  ${thin && "inputThin"}`}
-        type={date ? "date" : "text"}
+        type={
+          date ? "date" : password ? "password" : number ? "number" : "text"
+        }
         placeholder={placeholder}
         value={value}
         onChange={onChange}
         name={name}
         id={name}
         defaultValue={defaultValue}
+        required={required}
       />
     </div>
   );

@@ -19,8 +19,8 @@ const GroupEvents = () => {
     <div>
       <h1 className="settings-header">Group Events</h1>
       <div className="events-together">
-        {groupEvents.map((event) => (
-          <Event label={event.name} imageUrl={event.event_image} />
+        {groupEvents?.map((event) => (
+          <Event isSingle label={event.name} imageUrl={event.event_image} />
         ))}
       </div>
     </div>

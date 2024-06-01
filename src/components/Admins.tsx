@@ -16,16 +16,19 @@ const Admins = () => {
 
   return (
     <div>
-      <h1 className="settings-header">Admins</h1>
-      {admins.map((admin) => (
-        <AdminInfo
-          username={admin.username}
-          imgUrl={admin.profile_image}
-          memberId={admin.ID}
-          admins={admins}
-          setAdmins={setAdmins}
-        />
-      ))}
+      <h1 className="settings-header">Admins</h1>\
+      <h1 className="bold set-label">{admins?.length} Admins</h1>
+      <div className="members-container-members">
+        {admins?.map((admin) => (
+          <AdminInfo
+            username={admin.username}
+            imgUrl={admin.profile_image}
+            memberId={admin.ID}
+            admins={admins}
+            setAdmins={setAdmins}
+          />
+        ))}
+      </div>
     </div>
   );
 };

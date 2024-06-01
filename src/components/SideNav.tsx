@@ -17,6 +17,11 @@ const SideNav = ({
   icon3,
   icon4,
   icon5,
+  icon12,
+  icon22,
+  icon32,
+  icon42,
+  icon52,
   fifth,
 }) => {
   return (
@@ -29,7 +34,7 @@ const SideNav = ({
           }`}
         >
           <div className="button-container ">
-            <img src={icon1} />{" "}
+            <img src={selectedButton === "a-selected" ? icon12 : icon1} />{" "}
             <label className="setting-label">{label1}</label>
           </div>
         </button>
@@ -40,7 +45,7 @@ const SideNav = ({
           }`}
         >
           <div className="button-container">
-            <img src={icon2} />{" "}
+            <img src={selectedButton === "b-selected" ? icon22 : icon2} />{" "}
             <label className="setting-label">{label2}</label>
           </div>
         </button>
@@ -51,7 +56,7 @@ const SideNav = ({
           }`}
         >
           <div className="button-container">
-            <img src={icon3} />{" "}
+            <img src={selectedButton === "c-selected" ? icon32 : icon3} />{" "}
             <label className="setting-label">{label3}</label>
           </div>
         </button>
@@ -62,7 +67,7 @@ const SideNav = ({
           }`}
         >
           <div className="button-container">
-            <img src={selectedButton === "d-selected" ? icon1 : icon4} />{" "}
+            <img src={selectedButton === "d-selected" ? icon42 : icon4} />{" "}
             <label className="setting-label">{label4}</label>
           </div>
         </button>
@@ -74,7 +79,7 @@ const SideNav = ({
             }`}
           >
             <div className="button-container">
-              <img src={icon5} />{" "}
+              <img src={selectedButton === "e-selected" ? icon52 : icon5} />{" "}
               <label className="setting-label">{label5}</label>
             </div>
           </button>

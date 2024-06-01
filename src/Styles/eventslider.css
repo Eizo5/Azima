@@ -25,19 +25,29 @@
 .event-slider {
   width: 100%;
 }
+
+.image-container-hover {
+  position: relative;
+}
 .image-container-hover:hover .event-image {
-  filter: grayscale(200%) blur(5px);
+  filter: brightness(0.6) blur(4px);
 }
 
 .overlay-hover {
+  position: absolute;
+  top: 0;
+  left: 0;
   height: 100%;
   width: 100%;
   opacity: 0;
-  transition: opacity 0.3s ease;
-
+  transition: opacity 0.2s ease-in-out;
+  padding: 5rem;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: start;
+  gap: 1.5rem;
+  cursor: pointer;
+  z-index: 4;
 }
 
 .image-container-hover:hover .overlay-hover {
@@ -45,26 +55,26 @@
 }
 
 .hovered-items {
-  position: absolute;
-  right: 27rem;
-  bottom: 15rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: space-evenly;
   gap: 1rem;
+  height: 100%;
 }
 .hovered-texts {
-  position: absolute;
-  right: 17rem;
-  bottom: 15rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: space-evenly;
   gap: 1.4rem;
   font-weight: 700;
   color: #ffedff;
+  height: 100%;
+}
+
+.hovered-texts p {
+  margin-bottom: 0;
 }
 
 .hovered-items img {

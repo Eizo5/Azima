@@ -4,16 +4,19 @@ import OurButton from "./OurButton";
 import { useParams } from "react-router-dom";
 import useGroup from "../hooks/groupHook";
 
-const RequestInfo = ({ username, imgUrl, memberId }) => {
+const RequestInfo = ({ username, imgUrl, memberId, requests, setRequests }) => {
   const { id } = useParams();
   const { joinGroupResponse } = useGroup();
 
-  const handleReject = () => {
+  const handleReject = (e: any) => {
+    e.preventDefault();
     joinGroupResponse(id, memberId, "reject");
+    setRequests(() => requests.filter(({ ID }) => memberId !== ID));
   };
 
   const handleAccept = () => {
     joinGroupResponse(id, memberId, "accept");
+    setRequests(() => requests.filter(({ ID }) => memberId !== ID));
   };
 
   return (

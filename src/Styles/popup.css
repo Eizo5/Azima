@@ -12,34 +12,84 @@ body.active-popup {
   bottom: 0;
   right: 0;
   z-index: 99;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .overlay {
-  background: rgba(49, 49, 49, 0.8);
+  background: rgba(0, 0, 0, 0.6); /* Darker and slightly transparent */
 }
+
 .popup-content {
-  position: absolute;
-  top: 40%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  line-height: 1.4;
-  background: #f1f1f1;
-  padding: 14px 28px;
-  border-radius: 3px;
-  max-width: 1000px;
-  min-width: 500px;
-  max-height: 500px;
-  overflow: auto;
+  position: relative;
+  background: #fff; /* White background for better contrast */
+  padding: 20px;
+  border-radius: 8px; /* Rounded corners */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Box shadow for depth */
+  max-width: 600px; /* Maximum width for large screens */
+  width: 90%; /* Responsive width for smaller screens */
+  max-height: 80vh; /* Constrain height to avoid overflow */
+  overflow-y: auto; /* Scroll if content overflows */
+  border: none; /* Remove border */
 }
 
 .close-popup {
-  position: fixed;
+  position: absolute;
   top: 10px;
   right: 10px;
-  padding: 5px 7px;
+  background: none; /* No background */
+  border: none; /* No border */
+  font-size: 1.5rem; /* Larger font size */
+  cursor: pointer;
+  color: #333; /* Dark color */
+  font-size: 3rem;
 }
+
+.close-popup:hover {
+  color: #ff0000;
+  /* Red on hover */
+}
+
 .rating-comment {
   display: flex;
   flex-direction: column;
   gap: 15px;
+}
+
+.requests-notification-counter {
+  z-index: 1;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 100rem;
+  text-align: center;
+  background-color: red;
+  position: absolute;
+  top: 4rem;
+  right: 42rem;
+}
+.requests-notification-counter-2 {
+  z-index: 1;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 100rem;
+  text-align: center;
+  background-color: red;
+  position: absolute;
+  top: 2.3rem;
+  right: 27.4rem;
+}
+
+.do-you-want {
+  font-size: 3rem;
+  padding: 1rem;
+  color: rgb(86, 17, 113);
+  margin-bottom: 1rem;
+}
+
+.by-clicking {
+  font-size: 2rem;
+  color: #666;
+  margin-bottom: 2rem;
+  padding: 1rem;
 }

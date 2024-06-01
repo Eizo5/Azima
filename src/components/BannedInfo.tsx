@@ -4,7 +4,7 @@ import ImgHolder from "../assets/MartinGarrix.png";
 import useGroup from "../hooks/groupHook";
 import { useParams } from "react-router-dom";
 
-const BannedInfo = ({ username, imgUrl, ban }) => {
+const BannedInfo = ({ username, imgUrl, ban, banned, setban }) => {
   const { id } = useParams();
   const { removeBan } = useGroup();
 

@@ -15,10 +15,17 @@ interface EventProps {
   imageUrl: string;
   id: number;
   isEvent?: boolean;
+  isSingle?: boolean;
 }
 
 // Fixed
-export const Event = ({ label, imageUrl, id, isEvent = false }: EventProps) => {
+export const Event = ({
+  label,
+  imageUrl,
+  id,
+  isEvent = false,
+  isSingle = false,
+}: EventProps) => {
   const navigate = useNavigate();
   /* const { getGroupMembers, getGroup } = useGroup(); */
   const [groupData, setGroupData] = useState<Group | null>(null);
@@ -29,7 +36,7 @@ export const Event = ({ label, imageUrl, id, isEvent = false }: EventProps) => {
 
   return (
     <div
-      className="event"
+      className={isSingle ? "event-single " : "event"}
       onClick={() =>
         navigate(isEvent ? `/EventPage/${id}` : `/GroupPage/${id}`)
       }
@@ -37,7 +44,7 @@ export const Event = ({ label, imageUrl, id, isEvent = false }: EventProps) => {
       <div className="image-container-hover">
         <img
           className="event-image"
-          src={imageUrl || "/group-default-image.webp"}
+          src={imageUrl || "/src/assets/group-default-image.webp"}
           alt={label}
         />
         <div className="overlay-hover">
@@ -48,8 +55,8 @@ export const Event = ({ label, imageUrl, id, isEvent = false }: EventProps) => {
             <img src={queue} alt="Members" />
           </div>
           <div className="hovered-texts">
-            <p>{groupData?.categories}</p>
-            <p>{groupData?.location}</p>
+            <p>{groupData?.categories || "-"}</p>
+            <p>{groupData?.location || "-"}</p>
             <p>something3</p>
             <p>something4</p>
           </div>

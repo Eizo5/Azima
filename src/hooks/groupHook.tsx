@@ -135,7 +135,6 @@ const useGroup = () => {
         group_id: groupID,
         user_id: userID,
       });
-
       return response.data;
     } catch (error) {
       console.error(error);
@@ -229,7 +228,18 @@ const useGroup = () => {
         user_id,
         status,
       });
-      console.log(response.data);
+      return response.data;
+    } catch (error: any) {
+      console.error(error.response.data.msg);
+    }
+  };
+
+  const deleteGroup = async (group_id: any) => {
+    try {
+      const response = await axios.post(`http://localhost:9000/deleteGroup`, {
+        group_id,
+      });
+
       return response.data;
     } catch (error: any) {
       console.error(error.response.data.msg);
@@ -256,6 +266,7 @@ const useGroup = () => {
     leaveGroup,
     joinGroupResponse,
     updateGroup,
+    deleteGroup,
   };
 };
 

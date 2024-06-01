@@ -82,10 +82,12 @@ const UserProfile = () => {
       </div>
       <div className="event-container">
         <h1 className=""></h1>
-        <EventSlider
-          label={userData?.username + " Groups: " + userGroups?.length}
-          object={userGroups}
-        />
+        {userGroups && (
+          <EventSlider
+            label={userData?.username + " Groups: " + userGroups?.length}
+            object={userGroups}
+          />
+        )}
         {userOwnerGroups && (
           <EventSlider
             label={

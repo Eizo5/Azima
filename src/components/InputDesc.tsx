@@ -9,6 +9,7 @@ export const InputDesc = ({
   name,
   defaultValue,
   isTextArea = false,
+  required,
 }) => {
   return (
     <div className="input-text">
@@ -22,6 +23,7 @@ export const InputDesc = ({
           onChange={onChange}
           name={name}
           defaultValue={defaultValue}
+          required={required}
         />
       ) : (
         <input

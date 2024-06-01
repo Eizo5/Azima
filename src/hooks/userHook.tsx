@@ -33,10 +33,12 @@ const useAuthentication = (): {
   ) => void;
   logout: () => void;
   updateUser: (user_id: number | undefined, userData: any) => void;
+  updatePassword: (id: any, password: string) => void;
   getUser: (user_id: string | undefined) => void;
   getUserGroupsDiff: (user_id: any) => void;
   getUserOwnerGroupsDiff: (user_id: any) => void;
   getUserAdminGroupsDiff: (user_id: any) => void;
+  deleteAccount: (id: any) => void;
 } => {
   const navigate = useNavigate();
 
@@ -137,7 +139,8 @@ const useAuthentication = (): {
       localStorage.setItem("preferredGroups", JSON.stringify(groups));
       localStorage.setItem("preferences", JSON.stringify(userPreferences));
 
-      navigate("/home");
+      navigate("/Home");
+      console.log("Login successful:", response.data);
     } catch (error: any) {
       console.error("Error occurred during login:", error);
       alert(error?.response?.data?.msg);
@@ -238,6 +241,20 @@ const useAuthentication = (): {
     }
   };
 
+  const updatePassword = async (id: any, password: string) => {
+    try {
+      const response = await axios.put(`http://localhost:9000/updatePassword`, {
+        id,
+        password,
+      });
+      alert("Password updated successfully");
+      setUser({ ...user, password: password } as User);
+      return response.data;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const getUserEvents = async (user_id: number | undefined) => {
     try {
       const response = await axios.post(`http://localhost:9000/userEvents`, {
@@ -245,9 +262,7 @@ const useAuthentication = (): {
       });
 
       localStorage.setItem("userEvents", JSON.stringify(response.data));
-    } catch (error: any) {
-      console.error(error.response.data.msg);
-    }
+    } catch (error: any) {}
   };
 
   const getUser = async (user_id: string | undefined) => {
@@ -274,6 +289,17 @@ const useAuthentication = (): {
       console.error(error);
     }
   };
+
+  const deleteAccount = async (id: any) => {
+    try {
+      await axios.post(`http://localhost:9000/deleteAccount`, { id });
+      alert("Account deleted successfully");
+      logout();
+      navigate("/home");
+    } catch (error: any) {
+      console.error(error.response.data.msg);
+    }
+  };
   return {
     user,
     userEvents,
@@ -288,11 +314,13 @@ const useAuthentication = (): {
     login,
     logout,
     updateUser,
+    updatePassword,
     notifications,
     getUser,
     getUserGroupsDiff,
     getUserAdminGroupsDiff,
     getUserOwnerGroupsDiff,
+    deleteAccount,
   };
 };
 
